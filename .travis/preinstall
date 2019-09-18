@@ -4,15 +4,23 @@
 set -ex
 
 SCRIPTDIR=$(dirname $0)
+TOPDIR=${SCRIPTDIR}/..
 CONFIG=${SCRIPTDIR}/config.sh
 
+# A space separated list of packages to be installed on the Travis build
+# environment (Ubuntu). Set by user in .travis/config.sh.
+#LSR_EXTRA_PACKAGES=
+
+# Include library.
+. ${SCRIPTDIR}/utils.sh
+
+# Do a custom changes.
 if [[ -f ${CONFIG} ]]; then
   . ${CONFIG}
 fi
 
+# Install extra dependencies.
 if [[ "${LSR_EXTRA_PACKAGES}" ]]; then
   sudo apt-get update
-  for P in ${LSR_EXTRA_PACKAGES}; do
-    sudo apt-get install -y ${P} || :
-  done
+  sudo apt-get install -y ${LSR_EXTRA_PACKAGES}
 fi

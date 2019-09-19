@@ -1,14 +1,11 @@
 # SPDX-License-Identifier: MIT
 #
-# Shared shell library.
+# Auxiliary functions and variables.
 #
 # Usage: . utils.sh
-#
-# Before including this file, it is recommended to set TOPDIR to refer the top
-# directory of the project.
 
 # All variables prefixed with __lsr_ are used internally and should not be
-# changed by user in .travis/config.sh (but user may read them).
+# changed by the user in .travis/config.sh (but the user may read them).
 
 # Code that prints the version of Python interpreter to standard output; it
 # should be compatible across Python 2 and Python 3, the version is printed as
@@ -37,32 +34,18 @@ function lsr_get_python_version() {
 # Python interpreter associated with Travis job, i.e. for "- python: 3.6" in
 # .travis.yml job matrix definiton, `python --version`, when run from inside
 # the job, it prints "Python 3.6.7" or similar).
-__lsr_travis_python_version=$( \
-  expr "${TRAVIS_PYTHON_VERSION}" : '^\([[:digit:]]\.[[:digit:]]\).*$' \
-)
-if [[ -z "${__lsr_travis_python_version}" ]]; then
-  __lsr_travis_python_version=$(lsr_get_python_version python)
+if [[ "${TRAVIS}" ]]; then
+  __lsr_travis_python_version=$( \
+    expr "${TRAVIS_PYTHON_VERSION}" : '^\([[:digit:]]\.[[:digit:]]\).*$' \
+  )
+  if [[ -z "${__lsr_travis_python_version}" ]]; then
+    __lsr_travis_python_version=$(lsr_get_python_version python)
+  fi
+  # Store version in a form of array.
+  __lsr_travis_python_version=( \
+    $(echo ${__lsr_travis_python_version} | tr '.' ' ') \
+  )
 fi
-# Store version in form of array.
-__lsr_travis_python_version=( \
-  $(echo ${__lsr_travis_python_version} | tr '.' ' ') \
-)
-
-# List of Python source files in the project, one file per line with pathes
-# relative to the project root directory.
-__lsr_pyfiles="$( \
-  cd ${TRAVIS_BUILD_DIR:-${TOPDIR:-.}} \
-  && find . \( \
-    \( -name '*.py' -or -name '*.pyi' -or -name '*.pyw' \) ! -path './.*' \
-  \) \
-)"
-
-# List of unit tests runnable in pytest, one file per line with pathes relative
-# to the project root directory.
-__lsr_unit_tests="$( \
-  cd ${TRAVIS_BUILD_DIR:-${TOPDIR:-.}} \
-  && find . \( -path './tests/unit/*' -name 'test_*.py' \) \
-)"
 
 # Comma separated list of environment names that are passed to tox via TOXENV.
 LSR_ENVLIST=""
@@ -96,26 +79,16 @@ function lsr_error() {
 #     Travis job is same as the version of the system Python interpreter used
 #     in the underlying Travis build environment.
 #
-#   --if-has-pyfiles
-#
-#     Evaluates as true if the project contains Python source files.
-#
-#   --if-has-unit-tests
-#
-#     Evaluates as true if the project contains unit tests runnable by pytest.
-#
 # If envname contains characters 'X' and 'Y', then these are replaced by major
 # and minor version of Python interpreter used in this Travis job,
 # respectively.
 #
 # Examples:
 #
-#   For Python 2.7, add py27 to LSR_ENVLIST. For Python 3.6, add py36 to
-#   LSR_ENVLIST. The actions are taken only if the project has unit tests
-#   runnable by pytest:
+#   For Python 2.7, add py27 to LSR_ENVLIST; for Python 3.6, add py36 to
+#   LSR_ENVLIST:
 #
-#     lsr_envlist_add 'pyXY' --if-travis-python-in '2.7 3.6' \
-#                            --if-has-unit-tests
+#     lsr_envlist_add 'pyXY' --if-travis-python-in '2.7 3.6'
 #
 function lsr_envlist_add() {
   local envname
@@ -134,16 +107,6 @@ function lsr_envlist_add() {
         if [[ \
           "$(lsr_get_python_version /usr/bin/python3)" != "${X}.${Y}" \
         ]]; then
-          return
-        fi
-        ;;
-      --if-has-pyfiles)
-        if [[ -z "${__lsr_pyfiles}" ]]; then
-          return
-        fi
-        ;;
-      --if-has-unit-tests)
-        if [[ -z "${__lsr_unit_tests}" ]]; then
           return
         fi
         ;;

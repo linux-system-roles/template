@@ -4,7 +4,6 @@
 set -ex
 
 SCRIPTDIR=$(dirname $0)
-TOPDIR=${SCRIPTDIR}/..
 CONFIG=${SCRIPTDIR}/config.sh
 
 # A space separated list of packages to be installed on the Travis build

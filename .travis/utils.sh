@@ -7,73 +7,17 @@
 # Before including this file, it is recommended to set TOPDIR to refer the top
 # directory of the project.
 
-##
-# Internal variables:
-# - code that prints the version of Python interpreter to standard output; it
-#   should be compatible across Python 2 and Python 3, the version is printed
-#   as "${major}.${minor}"
+# All variables prefixed with __lsr_ are used internally and should not be
+# changed by user in .travis/config.sh (but user may read them).
+
+# Code that prints the version of Python interpreter to standard output; it
+# should be compatible across Python 2 and Python 3, the version is printed as
+# "{major}.{minor}".
 __lsr_get_python_version_py='
 import sys
 
 sys.stdout.write("%s.%s\n" % sys.version_info[:2])
 '
-# - major version number from TRAVIS_PYTHON_VERSION
-__lsr_travis_python_major=$(expr "${TRAVIS_PYTHON_VERSION}" : '^\([[:digit:]]\)\.[[:digit:]].*$')
-# - minor version number from TRAVIS_PYTHON_VERSION
-__lsr_travis_python_minor=$(expr "${TRAVIS_PYTHON_VERSION}" : '^[[:digit:]]\.\([[:digit:]]\).*$')
-# - 0 if the project contains Python source files
-test -n "$(cd ${TRAVIS_BUILD_DIR:-${TOPDIR:-.}} && find . \( \( -name '*.py' -or -name '*.pyi' -or -name '*.pyw' \) ! -path './.*' \))"
-__lsr_has_pyfiles=$?
-# - 0 if the project contains unit tests runnable in pytest
-test -n "$(cd ${TRAVIS_BUILD_DIR:-${TOPDIR:-.}} && find . \( -path './tests/unit/*' -name 'test_*.py' \))"
-__lsr_has_unit_tests=$?
-# - used by lsr_set_exitcode, lsr_update_exitcode, and lsr_exit
-__lsr_exitcode=0
-
-# Comma separated list of environment names that are passed to tox via TOXENV.
-LSR_ENVLIST=""
-
-##
-# lsr_error ARGS
-#
-# Print ARGS to stderr and exit with exit code 1.
-function lsr_error() {
-  echo "$*" >&2
-  exit 1
-}
-
-##
-# lsr_set_exitcode $1
-#
-#   $1 - exit code
-#
-# Set the internal variable holding exit code to $1.
-function lsr_set_exitcode() {
-  __lsr_exitcode=$1
-}
-
-##
-# lsr_update_exitcode $1
-#
-#   $1 - exit code
-#
-# If $1 is non-zero, update the internal variable holding exit code with $1.
-function lsr_update_exitcode() {
-  if [[ $1 -ne 0 ]]; then
-    __lsr_exitcode=$1
-  fi
-}
-
-##
-# lsr_exit $1
-#
-#   $1 - exit code (optional)
-#
-# If $1 is given, exit with $1. Otherwise exit with the exit code kept by
-# internal variable.
-function lsr_exit() {
-  exit ${1:-${__lsr_exitcode}}
-}
 
 ##
 # lsr_get_python_version $1
@@ -85,6 +29,51 @@ function lsr_get_python_version() {
   if command -v $1 >/dev/null 2>&1; then
     $1 -c "${__lsr_get_python_version_py}"
   fi
+}
+
+# Get the version of Python interpreter used in this Travis job. First, try to
+# extract "{major}.{minor}" from TRAVIS_PYTHON_VERSION. If that fails, fallback
+# to `python -c "__lsr_get_python_version_py"` (from logs, python refers to
+# Python interpreter associated with Travis job, i.e. for "- python: 3.6" in
+# .travis.yml job matrix definiton, `python --version`, when run from inside
+# the job, it prints "Python 3.6.7" or similar).
+__lsr_travis_python_version=$( \
+  expr "${TRAVIS_PYTHON_VERSION}" : '^\([[:digit:]]\.[[:digit:]]\).*$' \
+)
+if [[ -z "${__lsr_travis_python_version}" ]]; then
+  __lsr_travis_python_version=$(lsr_get_python_version python)
+fi
+# Store version in form of array.
+__lsr_travis_python_version=( \
+  $(echo ${__lsr_travis_python_version} | tr '.' ' ') \
+)
+
+# List of Python source files in the project, one file per line with pathes
+# relative to the project root directory.
+__lsr_pyfiles="$( \
+  cd ${TRAVIS_BUILD_DIR:-${TOPDIR:-.}} \
+  && find . \( \
+    \( -name '*.py' -or -name '*.pyi' -or -name '*.pyw' \) ! -path './.*' \
+  \) \
+)"
+
+# List of unit tests runnable in pytest, one file per line with pathes relative
+# to the project root directory.
+__lsr_unit_tests="$( \
+  cd ${TRAVIS_BUILD_DIR:-${TOPDIR:-.}} \
+  && find . \( -path './tests/unit/*' -name 'test_*.py' \) \
+)"
+
+# Comma separated list of environment names that are passed to tox via TOXENV.
+LSR_ENVLIST=""
+
+##
+# lsr_error ARGS
+#
+# Print ARGS to stderr and exit with exit code 1.
+function lsr_error() {
+  echo "$*" >&2
+  exit 1
 }
 
 ##
@@ -130,29 +119,31 @@ function lsr_get_python_version() {
 #
 function lsr_envlist_add() {
   local envname
-  local major="${__lsr_travis_python_major}"
-  local minor="${__lsr_travis_python_minor}"
+  local X="${__lsr_travis_python_version[0]}"
+  local Y="${__lsr_travis_python_version[1]}"
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
       --if-travis-python-in)
         shift
-        if [[ -z "${major}${minor}" || ! "$1" =~ ${major}\.${minor} ]]; then
+        if [[ -z "${X}${Y}" || ! "$1" =~ ${X}\.${Y} ]]; then
           return
         fi
         ;;
       --if-travis-python-is-system-python)
-        if [[ "$(lsr_get_python_version /usr/bin/python3)" != "${major}.${minor}" ]]; then
+        if [[ \
+          "$(lsr_get_python_version /usr/bin/python3)" != "${X}.${Y}" \
+        ]]; then
           return
         fi
         ;;
       --if-has-pyfiles)
-        if [[ ${__lsr_has_pyfiles} -ne 0 ]]; then
+        if [[ -z "${__lsr_pyfiles}" ]]; then
           return
         fi
         ;;
       --if-has-unit-tests)
-        if [[ ${__lsr_has_unit_tests} -ne 0 ]]; then
+        if [[ -z "${__lsr_unit_tests}" ]]; then
           return
         fi
         ;;
@@ -166,7 +157,7 @@ function lsr_envlist_add() {
     shift
   done
 
-  envname=$(echo ${envname} | tr XY ${major:-X}${minor:-Y})
+  envname=$(echo ${envname} | tr XY ${X:-X}${Y:-Y})
 
   if [[ "${envname}" ]]; then
     if [[ "${LSR_ENVLIST}" ]]; then

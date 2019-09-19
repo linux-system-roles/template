@@ -15,24 +15,23 @@ CONFIG=${SCRIPTDIR}/config.sh
 . ${SCRIPTDIR}/utils.sh
 
 # Assemble envlist that should be common for all roles.
-lsr_envlist_add 'pyXY' --if-travis-python-in '2.6 2.7 3.6 3.7 3.8' --if-has-unit-tests
-lsr_envlist_add 'flake8,pylint' --if-travis-python-in '2.7' --if-has-pyfiles
-lsr_envlist_add 'black' --if-travis-python-in '3.6' --if-has-pyfiles
-lsr_envlist_add 'molecule' --if-travis-python-is-system-python
+if [[ "${TRAVIS}" ]]; then
+  lsr_envlist_add 'pyXY' --if-travis-python-in '2.6 2.7 3.6 3.7 3.8' --if-has-unit-tests
+  lsr_envlist_add 'flake8,pylint' --if-travis-python-in '2.7' --if-has-pyfiles
+  lsr_envlist_add 'black' --if-travis-python-in '3.6' --if-has-pyfiles
+  lsr_envlist_add 'molecule' --if-travis-python-is-system-python
+else
+  lsr_envlist_add 'black,pylint,flake8' --if-has-pyfiles
+  lsr_envlist_add 'py26,py27,py36,py37,py38' --if-has-unit-tests
+fi
 
 # Do a custom changes.
 if [[ -f ${CONFIG} ]]; then
   . ${CONFIG}
 fi
 
-# Use TOXENV only if we are running on Travis (locally, we use envlist). Since
-# tox-travis is not capable of system python detection, we use Bash wrapper
-# around tox as workaround. This give us power to also assemble envlists
-# dynamically, which is a problem to do in tox.
-if [[ "${TRAVIS}" ]]; then
-  export TOXENV="${LSR_ENVLIST}"
-  echo "TOXENV=${TOXENV}"
-fi
+# Make envlist visible to tox.
+export TOXENV="${LSR_ENVLIST}"
 
 # When running tox, the envlist deduction is like follows:
 #
@@ -41,13 +40,11 @@ fi
 # tox.ini's envlist has lowest priority, tox -e envlist highest. Keep that in
 # mind when running tox locally.
 
-# If we are running under Travis CI and TOXENV is empty, skip running the tox.
-lsr_set_exitcode 0
-if [[ -z "${TRAVIS}" || "${TOXENV}" ]]; then
-  (cd ${TRAVIS_BUILD_DIR:-${TOPDIR}} && tox "$@"); lsr_update_exitcode $?
+# If TOXENV is empty, skip running the tox.
+if [[ "${TOXENV}" ]]; then
+  (cd ${TRAVIS_BUILD_DIR:-${TOPDIR}} && tox "$@")
 fi
+# `tox -e ...` overrides TOXENV.
 for X in ${LSR_MSCENARIOS}; do
-  (cd ${TRAVIS_BUILD_DIR:-${TOPDIR}} && LSR_MSCENARIO=${X} tox -e molecule); lsr_update_exitcode $?
+  (cd ${TRAVIS_BUILD_DIR:-${TOPDIR}} && LSR_MSCENARIO=${X} tox -e molecule)
 done
-
-lsr_exit

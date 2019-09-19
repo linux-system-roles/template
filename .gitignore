@@ -1,4 +1,6 @@
 passes.yml
 vault.yml
+*.pyc
 *.retry
+/tests/.coverage
 /.tox

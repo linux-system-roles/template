@@ -1,7 +1,10 @@
 galaxy_info:
-  author: your name
-  description: your description
-  company: your company (optional)
+  # Replace with role's author name:
+  author: John Doe <jdoe@corp.com>
+  # Replace with the real description of what is role's purpose:
+  description: Basic template for Linux system roles
+  # Replace with the company the role's author is member of:
+  company: John Doe, Inc.
 
   # If the issue tracker for your role is not on github, uncomment the
   # next line and provide a value
@@ -14,7 +17,7 @@ galaxy_info:
   # - GPLv3
   # - Apache
   # - CC-BY
-  license: license (GPLv2, CC-BY, etc)
+  license: MIT
 
   min_ansible_version: 1.2
 
@@ -43,6 +46,14 @@ galaxy_info:
   #   - 1.0
   #   - 7
   #   - 99.99
+  platforms:
+    # Replace the below with your platform list:
+    - name: Fedora
+      versions:
+        - all
+    - name: EL
+      versions:
+        - all
 
   galaxy_tags: []
   # List tags for your role here, one per line. A tag is a keyword that describes

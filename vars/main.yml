@@ -1,2 +1,6 @@
+# SPDX-License-Identifier: MIT
 ---
-# vars file for template
+# Put the role's internal variables here that are not distribution specific.
+
+# Examples of non-distribution specific (generic) internal variables:
+__template_foo_config: "foo.conf"

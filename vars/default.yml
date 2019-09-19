@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 ---
-# Put internal variables here with CentOS 6 specific values.
+# Put internal variables here with values for unrecognized distributions.
 
 # Example:
 __template_packages: []

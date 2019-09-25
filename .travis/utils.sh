@@ -15,6 +15,10 @@ import sys
 sys.stdout.write("%s.%s\n" % sys.version_info[:2])
 '
 
+echo "COLORTERM=${COLORTERM}"
+echo "TERM=${TERM}"
+echo "lowercase(TERM)=${TERM,,}"
+
 # Colors for lsr_info and lsr_error.
 if [[ "${COLORTERM}" || "${TERM,,}" =~ ^(xterm|linux|.*color.*)$ ]]; then
   __lsr_color_normal='\033[39m'

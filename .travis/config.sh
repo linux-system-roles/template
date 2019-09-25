@@ -27,10 +27,10 @@
 #
 
 ##
-# lsr_coveralls_hook ARGS
+# lsr_runcoveralls_hook ARGS
 #
 # Called from .travis/runcoveralls.sh.
-function lsr_coveralls_hook() {
+function lsr_runcoveralls_hook() {
   # Add custom commands here.
   return 0
 }

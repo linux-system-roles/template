@@ -12,6 +12,7 @@
 # LSR_MSCENARIOS and LSR_ANSIBLES can be set in .travis/config.sh or as
 # environment variables.
 
+ME=$(basename $0)
 SCRIPTDIR=$(readlink -f $(dirname $0))
 
 # Include library and config.
@@ -19,6 +20,12 @@ SCRIPTDIR=$(readlink -f $(dirname $0))
 . ${SCRIPTDIR}/config.sh
 
 (set -x; tox); E=$?
+
+if lsr_check_python_version python -le '3.4'; then
+  lsr_info "${ME}: Only Python >= 3.5 is allowed to install Ansible. Skipping."
+  exit $E
+fi
+
 for X in ${LSR_ANSIBLES}; do
   for Y in ${LSR_MSCENARIOS}; do
     (set -x; LSR_ANSIBLE_DEP="${X}" LSR_MSCENARIO=${Y} tox -e molecule) || E=$?

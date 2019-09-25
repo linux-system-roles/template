@@ -16,11 +16,10 @@ sys.stdout.write("%s.%s\n" % sys.version_info[:2])
 '
 
 # Colors for lsr_info and lsr_error.
-__lsr_ncolors=$(tput colors)
-if [[ "${__lsr_ncolors}" && ${__lsr_ncolors} -ge 8 ]]; then
-  __lsr_color_normal="$(tput sgr0)"
-  __lsr_color_red="$(tput setaf 1)"
-  __lsr_color_blue="$(tput setaf 4)"
+if [[ "${COLORTERM}" || "${TERM,,}" =~ ^(xterm|linux|.*color.*)$ ]]; then
+  __lsr_color_normal='\033[39m'
+  __lsr_color_red='\033[31m'
+  __lsr_color_blue='\033[34m'
 fi
 
 ##
@@ -28,7 +27,7 @@ fi
 #
 # Print ARGS (in blue) to stdout.
 function lsr_info() {
-  echo "${__lsr_color_blue}$*${__lsr_color_normal}"
+  echo -e "${__lsr_color_blue}$*${__lsr_color_normal}"
 }
 
 ##
@@ -36,7 +35,7 @@ function lsr_info() {
 #
 # Print ARGS (in red) to stderr and exit with exit code 1.
 function lsr_error() {
-  echo "${__lsr_color_red}$*${__lsr_color_normal}" >&2
+  echo -e "${__lsr_color_red}$*${__lsr_color_normal}" >&2
   exit 1
 }
 

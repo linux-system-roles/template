@@ -1,47 +1,28 @@
 #!/bin/bash
 # SPDX-License-Identifier: MIT
 
-set -ex
+# Run tox. Additionally, if LSR_MSCENARIOS is defined, run `tox -e molecule`
+# for every scenario from LSR_MSCENARIOS and for every Ansible version from
+# LSR_ANSIBLES.
+#
+# LSR_MSCENARIOS is a space separated list of molecule scenarios.
+# LSR_ANSIBLES is a space separated list of Ansible package names with versions
+# in pip format, i.e 'ansible ansible==2.6 ansible==2.7 ansible=2.8'.
+#
+# LSR_MSCENARIOS and LSR_ANSIBLES can be set in .travis/config.sh or as
+# environment variables.
 
-SCRIPTDIR=$(dirname $0)
-TOPDIR=${SCRIPTDIR}/..
-CONFIG=${SCRIPTDIR}/config.sh
+SCRIPTDIR=$(realpath $(dirname $0))
 
-# Space separated list of molecule scenarios. Set by user in .travis/config.sh
-# or as environment variable.
-#LSR_MSCENARIOS=
-
-# Include library.
+# Include library and config.
 . ${SCRIPTDIR}/utils.sh
+. ${SCRIPTDIR}/config.sh
 
-# Assemble envlist that should be common for all roles.
-lsr_envlist_add 'pyXY' --if-travis-python-in '2.6 2.7 3.6 3.7 3.8'
-lsr_envlist_add 'flake8,pylint' --if-travis-python-in '2.7'
-lsr_envlist_add 'black' --if-travis-python-in '3.6'
-lsr_envlist_add 'molecule' --if-travis-python-is-system-python
-
-# Do a custom changes.
-if [[ -f ${CONFIG} ]]; then
-  . ${CONFIG}
-fi
-
-# Make envlist visible to tox (TOXENV should be undefined when running tox
-# locally).
-if [[ "${TRAVIS}" ]]; then
-  export TOXENV="${LSR_ENVLIST}"
-fi
-
-# When running tox, the envlist deduction is like follows:
-#
-#   tox.ini's envlist < [travis] section < TOXENV < tox -e envlist
-#
-# tox.ini's envlist has lowest priority, tox -e envlist highest.
-
-# If we are in Travis and TOXENV is empty, skip running the tox.
-if [[ -z "${TRAVIS}" || "${TOXENV}" ]]; then
-  (cd ${TRAVIS_BUILD_DIR:-${TOPDIR}} && tox "$@")
-fi
-# `tox -e ...` overrides TOXENV.
-for X in ${LSR_MSCENARIOS}; do
-  (cd ${TRAVIS_BUILD_DIR:-${TOPDIR}} && LSR_MSCENARIO=${X} tox -e molecule)
+(set -x; tox); E=$?
+for X in ${LSR_ANSIBLES}; do
+  for Y in ${LSR_MSCENARIOS}; do
+    (set -x; LSR_ANSIBLE_DEP="${X}" LSR_MSCENARIO=${Y} tox -e molecule) || E=$?
+  done
 done
+
+exit $E

@@ -4,8 +4,7 @@
 #
 # Usage: . utils.sh
 
-# All variables prefixed with __lsr_ are used internally and should not be
-# changed by the user in .travis/config.sh (but the user may read them).
+# All variables prefixed with __lsr_ are internal.
 
 # Code that prints the version of Python interpreter to standard output; it
 # should be compatible across Python 2 and Python 3, the version is printed as
@@ -15,6 +14,31 @@ import sys
 
 sys.stdout.write("%s.%s\n" % sys.version_info[:2])
 '
+
+# Colors for lsr_info and lsr_error.
+__lsr_ncolors=$(tput colors)
+if [[ "${__lsr_ncolors}" && ${__lsr_ncolors} -ge 8 ]]; then
+  __lsr_color_normal="$(tput sgr0)"
+  __lsr_color_red="$(tput setaf 1)"
+  __lsr_color_blue="$(tput setaf 4)"
+fi
+
+##
+# lsr_info ARGS
+#
+# Print ARGS (in blue) to stdout.
+function lsr_info() {
+  echo "${__lsr_color_blue}$*${__lsr_color_normal}"
+}
+
+##
+# lsr_error ARGS
+#
+# Print ARGS (in red) to stderr and exit with exit code 1.
+function lsr_error() {
+  echo "${__lsr_color_red}$*${__lsr_color_normal}" >&2
+  exit 1
+}
 
 ##
 # lsr_get_python_version $1
@@ -28,105 +52,54 @@ function lsr_get_python_version() {
   fi
 }
 
-# Get the version of Python interpreter used in this Travis job. First, try to
-# extract "{major}.{minor}" from TRAVIS_PYTHON_VERSION. If that fails, fallback
-# to `python -c "__lsr_get_python_version_py"` (from logs, python refers to
-# Python interpreter associated with Travis job, i.e. for "- python: 3.6" in
-# .travis.yml job matrix definiton, `python --version`, when run from inside
-# the job, it prints "Python 3.6.7" or similar).
-if [[ "${TRAVIS}" ]]; then
-  __lsr_travis_python_version=$( \
-    expr "${TRAVIS_PYTHON_VERSION}" : '^\([[:digit:]]\.[[:digit:]]\).*$' \
-  )
-  if [[ -z "${__lsr_travis_python_version}" ]]; then
-    __lsr_travis_python_version=$(lsr_get_python_version python)
-  fi
-  # Store version in a form of array.
-  __lsr_travis_python_version=( \
-    $(echo ${__lsr_travis_python_version} | tr '.' ' ') \
-  )
-fi
-
-# Comma separated list of environment names that are passed to tox via TOXENV.
-LSR_ENVLIST=""
-
 ##
-# lsr_error ARGS
+# lsr_compare_versions $1 $2 $3
 #
-# Print ARGS to stderr and exit with exit code 1.
-function lsr_error() {
-  echo "$*" >&2
-  exit 1
+#   $1 - version string (see notes below)
+#   $2 - binary operation (see TEST(1))
+#   $3 - version string (see notes below)
+#
+# Exit with 0 if `$1 $2 $3`.
+#
+# Notes:
+#   A version string is of the format [:digit:] "." [:digit:].
+function lsr_compare_versions() {
+  if [[ $# -lt 3 ]]; then
+    return 1
+  fi
+
+  test ${1//./} $2 ${3//./}
 }
 
 ##
-# lsr_envlist_add [conditions] envname
+# lsr_check_python_version $1 $2 $3
 #
-# Append envname to LSR_ENVLIST if conditions are met. Conditions are:
+#   $1 - command or full path to Python interpreter
+#   $2 - binary operation (see TEST(1))
+#   $3 - version string in [:digit:] "." [:digit:] format.
 #
-#   --if-travis-python-in VERSIONS
-#
-#     Evaluates as true if the version of Python interpreter used in this
-#     Travis job is contained in VERSIONS (only the major and minor versions
-#     are important). VERSIONS is a space or comma (other delimiters are also
-#     possible) separated list of versions of format <major>.<minor>. Example:
-#
-#       lsr_envlist_add 'flake8' --if-travis-python-in '2.6 2.7 3.6 3.7 3.8'
-#
-#   --if-travis-python-is-system-python
-#
-#     Evaluates as true if the version of Python interpreter used in this
-#     Travis job is same as the version of the system Python interpreter used
-#     in the underlying Travis build environment.
-#
-# If envname contains characters 'X' and 'Y', then these are replaced by major
-# and minor version of Python interpreter used in this Travis job,
-# respectively.
-#
-# Examples:
-#
-#   For Python 2.7, add py27 to LSR_ENVLIST; for Python 3.6, add py36 to
-#   LSR_ENVLIST:
-#
-#     lsr_envlist_add 'pyXY' --if-travis-python-in '2.7 3.6'
-#
-function lsr_envlist_add() {
-  local envname
-  local X="${__lsr_travis_python_version[0]}"
-  local Y="${__lsr_travis_python_version[1]}"
-
-  while [[ $# -gt 0 ]]; do
-    case "$1" in
-      --if-travis-python-in)
-        shift
-        if [[ -z "${X}${Y}" || ! "$1" =~ ${X}\.${Y} ]]; then
-          return
-        fi
-        ;;
-      --if-travis-python-is-system-python)
-        if [[ \
-          "$(lsr_get_python_version /usr/bin/python3)" != "${X}.${Y}" \
-        ]]; then
-          return
-        fi
-        ;;
-      --*)
-        lsr_error "${FUNCNAME[0]}: Unrecognized option '$1'."
-        ;;
-      *)
-        envname="$1"
-        ;;
-    esac
-    shift
-  done
-
-  envname=$(echo ${envname} | tr XY ${X:-X}${Y:-Y})
-
-  if [[ "${envname}" ]]; then
-    if [[ "${LSR_ENVLIST}" ]]; then
-      LSR_ENVLIST="${LSR_ENVLIST},${envname}"
-    else
-      LSR_ENVLIST="${envname}"
-    fi
+# Exit with 0 if `version($1) $2 $3`.
+function lsr_check_python_version() {
+  if [[ $# -lt 3 ]]; then
+    return 1
   fi
+
+  lsr_compare_versions $(lsr_get_python_version $1) $2 $3
+}
+
+##
+# lsr_compare_pythons $1 $2 $3
+#
+#   $1 - command or full path to Python interpreter
+#   $2 - binary operation (see TEST(1))
+#   $3 - command or full path to Python interpreter
+#
+# Exit with 0 if `version($1) $2 version($3)`.
+function lsr_compare_pythons() {
+  if [[ $# -lt 3 ]]; then
+    return 1
+  fi
+
+  lsr_compare_versions \
+    $(lsr_get_python_version $1) $2 $(lsr_get_python_version $3)
 }

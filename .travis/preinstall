@@ -1,25 +1,23 @@
 #!/bin/bash
 # SPDX-License-Identifier: MIT
 
-set -ex
+# Install package specified by user in LSR_EXTRA_PACKAGES. Executed by Travis
+# during before_install phase.
+#
+# LSR_EXTRA_PACKAGES, set by user in .travis/config.sh, is a space separated
+# list of packages to be installed on the Travis build environment (Ubuntu).
 
-SCRIPTDIR=$(dirname $0)
-CONFIG=${SCRIPTDIR}/config.sh
+set -e
 
-# A space separated list of packages to be installed on the Travis build
-# environment (Ubuntu). Set by user in .travis/config.sh.
-#LSR_EXTRA_PACKAGES=
+SCRIPTDIR=$(realpath $(dirname $0))
 
-# Include library.
+# Include library and config.
 . ${SCRIPTDIR}/utils.sh
-
-# Do a custom changes.
-if [[ -f ${CONFIG} ]]; then
-  . ${CONFIG}
-fi
+. ${SCRIPTDIR}/config.sh
 
 # Install extra dependencies.
 if [[ "${LSR_EXTRA_PACKAGES}" ]]; then
+  set -x
   sudo apt-get update
   sudo apt-get install -y ${LSR_EXTRA_PACKAGES}
 fi

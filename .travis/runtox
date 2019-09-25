@@ -12,7 +12,7 @@
 # LSR_MSCENARIOS and LSR_ANSIBLES can be set in .travis/config.sh or as
 # environment variables.
 
-SCRIPTDIR=$(realpath $(dirname $0))
+SCRIPTDIR=$(readlink -f $(dirname $0))
 
 # Include library and config.
 . ${SCRIPTDIR}/utils.sh

@@ -7,8 +7,8 @@
 set -e
 
 ME=$(basename $0)
-SCRIPTDIR=$(realpath $(dirname $0))
-TOPDIR=$(realpath ${SCRIPTDIR}/..)
+SCRIPTDIR=$(readlink -f $(dirname $0))
+TOPDIR=$(readlink -f ${SCRIPTDIR}/..)
 
 # Include library.
 . ${SCRIPTDIR}/utils.sh

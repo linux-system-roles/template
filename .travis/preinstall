@@ -9,7 +9,7 @@
 
 set -e
 
-SCRIPTDIR=$(realpath $(dirname $0))
+SCRIPTDIR=$(readlink -f $(dirname $0))
 
 # Include library and config.
 . ${SCRIPTDIR}/utils.sh

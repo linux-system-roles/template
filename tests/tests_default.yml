@@ -1,5 +1,6 @@
 ---
-- hosts: localhost
-  remote_user: root
+- name: Ensure that the role runs with default parameters
+  hosts: all
+
   roles:
-    - template
+    - linux-system-roles.template

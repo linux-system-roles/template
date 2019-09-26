@@ -1,0 +1,5 @@
+---
+# Put internal variables here with Red Hat Enterprise Linux 6 specific values.
+
+# Example:
+_template_distrocode: "RHEL 6"

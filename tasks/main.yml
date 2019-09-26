@@ -1,28 +1,35 @@
 ---
-# tasks file for template
+# Put the tasks for your role here.
 
+# An example of how to set distribution and version specific internal variables
+# (defined in vars/ directory):
 - name: Set version specific variables
   include_vars: "{{ item }}"
   with_first_found:
+    - "{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
     - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
     - "{{ ansible_distribution }}.yml"
     - "{{ ansible_os_family }}.yml"
     - "default.yml"
 
-- name: Install packages
-  package:
-    name: "{{ SOME_PACKAGE_NAMES_VARIABLE | default([]) }}"
-    state: present
+# Examples of some tasks:
+- name: Show distribution info
+  debug:
+    msg: |
+      Distribution: {{ ansible_distribution }}
+      - version: {{ ansible_distribution_version }}
+      - major version: {{ ansible_distribution_major_version }}
+      - OS family: {{ ansible_os_family }}
 
-- name: Enable SUBSYSTEM service
-  service:
-    name: "{{ SUBSYSTEM_service_name }}"
-    state: started
-    enabled: yes
+- name: Say hello
+  debug:
+    msg: >
+      Hello from {{
+        _template_lquote + _template_distrocode + _template_rquote
+      }}!
 
-- name: Generate /etc/SUBSYSTEM.conf
-  template:
-    src: SUBSYSTEM.conf.j2
-    dest: /etc/SUBSYSTEM.conf
-    backup: yes
-  notify: restart SUBSYSTEM
+- name: Create a temporary file
+  copy:
+    content: "{{ template_greeting }}"
+    dest: "/tmp/{{ template_tmpfile }}"
+  notify: template handler to report the file has been changed

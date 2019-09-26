@@ -1,0 +1,5 @@
+---
+# Put internal variables here with Red Hat Enterprise Linux 7 specific values.
+
+# Example:
+_template_distrocode: "RHEL 7"

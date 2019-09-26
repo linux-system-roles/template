@@ -1,0 +1,5 @@
+---
+# Put internal variables here with values for unrecognized distributions.
+
+# Example:
+_template_distrocode: "{{ ansible_distribution }} {{ ansible_distribution_version }}"

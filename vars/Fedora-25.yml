@@ -1,0 +1,5 @@
+---
+# Put internal variables here with Fedora 25 specific values.
+
+# Example:
+_template_distrocode: "Fedora 25"

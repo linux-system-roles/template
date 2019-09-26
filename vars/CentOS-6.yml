@@ -1,0 +1,5 @@
+---
+# Put internal variables here with CentOS 6 specific values.
+
+# Exmple:
+_template_distrocode: "CentOS 6"

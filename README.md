@@ -1,45 +1,59 @@
-Role Name
-=========
+# Role Name
 
-A template for an ansible role which configures some GNU/Linux subsystem or service.
-A brief description of the role goes here.
+A template for an ansible role which configures some GNU/Linux subsystem or
+service. A brief description of the role goes here.
 
-Requirements
-------------
+## Requirements
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+Any pre-requisites that may not be covered by Ansible itself or the role should
+be mentioned here. For instance, if the role uses the EC2 module, it may be a
+good idea to mention in this section that the `boto` package is required.
 
-Role Variables
---------------
+## Role Variables
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+A description of all input variables (i.e. variables that are defined in
+`defaults/main.yml`) for the role should go here as these form an API of the
+role.
+
+Variables that are not intended as input, like variables defined in
+`vars/main.yml`, variables that are read from other roles and/or the global
+scope (ie. hostvars, group vars, etc.) can be also mentioned here but keep in
+mind that as these are probably not part of the role API they may change during
+the lifetime.
+
+Example of setting the variables:
 
 ```yaml
-some_feature:
-  option: foo
-  location: /tmp/bar
+template_greeting: "Hello, World!\n"
+template_tmpfile: "hello_world"
 ```
 
-Dependencies
-------------
+## Dependencies
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+A list of other roles hosted on Galaxy should go here, plus any details in
+regards to parameters that may need to be set for other roles, or variables
+that are used from other roles.
 
-Example Playbook
-----------------
+## Example Playbook
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+Including an example of how to use your role (for instance, with variables
+passed in as parameters) is always nice for users too:
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+```yaml
+- hosts: all
+  vars:
+    template_greeting: "See ya!\n"
+    template_tmpfile: "bye_bye"
 
-License
--------
+  roles:
+    - linux-system-roles.template
+```
 
-assign accordingly, default GPLv3
+## License
 
-Author Information
-------------------
+Whenever possible, please prefer MIT.
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+## Author Information
+
+An optional section for the role authors to include contact information, or a
+website (HTML is not allowed).

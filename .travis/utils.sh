@@ -16,10 +16,10 @@ sys.stdout.write("%s.%s\n" % sys.version_info[:2])
 '
 
 # Colors for lsr_banner, lsr_info, and lsr_error.
-__lsr_color_normal='\033[39m'
-__lsr_color_red='\033[31m'
-__lsr_color_blue='\033[34m'
-__lsr_color_yellow='\033[93m'
+__lsr_color_reset='\e[0m'
+__lsr_color_red='\e[31m'
+__lsr_color_blue='\e[34m'
+__lsr_color_yellow='\e[1;33m'
 
 ##
 # lsr_banner $1 [$2]
@@ -50,8 +50,8 @@ function lsr_banner() {
   line2=$(printf "%*s" $(( ${fillsize} / 2 )) "" | tr " " "${fillchar}")
   line2="${line2}${text}${line2}"
 
-  echo -e "${__lsr_color_yellow}${line1}${__lsr_color_normal}"
-  echo -e "${__lsr_color_yellow}${line2}${__lsr_color_normal}"
+  echo -e "${__lsr_color_yellow}${line1}${__lsr_color_reset}"
+  echo -e "${__lsr_color_yellow}${line2}${__lsr_color_reset}"
 }
 
 ##
@@ -59,7 +59,7 @@ function lsr_banner() {
 #
 # Print ARGS (in blue) to stdout.
 function lsr_info() {
-  echo -e "${__lsr_color_blue}$*${__lsr_color_normal}"
+  echo -e "${__lsr_color_blue}$*${__lsr_color_reset}"
 }
 
 ##
@@ -67,7 +67,7 @@ function lsr_info() {
 #
 # Print ARGS (in red) to stderr and exit with exit code 1.
 function lsr_error() {
-  echo -e "${__lsr_color_red}$*${__lsr_color_normal}" >&2
+  echo -e "${__lsr_color_red}$*${__lsr_color_reset}" >&2
   exit 1
 }
 

@@ -15,10 +15,44 @@ import sys
 sys.stdout.write("%s.%s\n" % sys.version_info[:2])
 '
 
-# Colors for lsr_info and lsr_error.
+# Colors for lsr_banner, lsr_info, and lsr_error.
 __lsr_color_normal='\033[39m'
 __lsr_color_red='\033[31m'
 __lsr_color_blue='\033[34m'
+__lsr_color_yellow='\033[93m'
+
+##
+# lsr_banner $1 [$2]
+#
+#   $1 - banner text
+#   $2 - number of columns to occupy (default: 79)
+#
+# Print banner (in yellow) with $1 to stdout.
+function lsr_banner() {
+  local maxlen=${2:-79}
+  local fillchar='_'
+  local text=" ${1} "
+  local fillsize=$(( ${maxlen} - ${#text} ))
+  local line1
+  local line2
+
+  if [[ ${fillsize} -lt 0 ]]; then
+    maxlen=${#text}
+    fillsize=0
+  fi
+
+  line1=$(printf "%*s" ${maxlen} "" | tr " " "${fillchar}")
+
+  if [[ $(( ${fillsize} % 2 )) -eq 1 ]]; then
+    text="${text} "
+  fi
+
+  line2=$(printf "%*s" $(( ${fillsize} / 2 )) "" | tr " " "${fillchar}")
+  line2="${line2}${text}${line2}"
+
+  echo -e "${__lsr_color_yellow}${line1}${__lsr_color_normal}"
+  echo -e "${__lsr_color_yellow}${line2}${__lsr_color_normal}"
+}
 
 ##
 # lsr_info ARGS

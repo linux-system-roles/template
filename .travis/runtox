@@ -14,11 +14,13 @@
 
 ME=$(basename $0)
 SCRIPTDIR=$(readlink -f $(dirname $0))
+BANNERSIZE=90
 
 # Include library and config.
 . ${SCRIPTDIR}/utils.sh
 . ${SCRIPTDIR}/config.sh
 
+lsr_banner "tox" ${BANNERSIZE}
 (set -x; tox); E=$?
 
 if lsr_check_python_version python -le '3.4'; then
@@ -28,6 +30,7 @@ fi
 
 for X in ${LSR_ANSIBLES}; do
   for Y in ${LSR_MSCENARIOS}; do
+    lsr_banner "[${X}] tox -e molecule -- -s ${Y}" ${BANNERSIZE}
     (set -x; LSR_ANSIBLE_DEP="${X}" LSR_MSCENARIO=${Y} tox -e molecule) || E=$?
   done
 done

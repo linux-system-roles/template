@@ -3,4 +3,7 @@
 # Put internal variables here with Fedora 25 specific values.
 
 # Example:
-_template_distrocode: "Fedora 25"
+__template_packages:
+  - foo
+  - bar
+__template_service: food

@@ -3,4 +3,7 @@
 # Put internal variables here with Fedora 24 specific values.
 
 # Example:
-_template_distrocode: "CentOS 24"
+__template_packages:
+  - foo
+  - bar
+__template_service: food

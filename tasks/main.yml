@@ -14,23 +14,20 @@
     - "default.yml"
 
 # Examples of some tasks:
-- name: Show distribution info
-  debug:
-    msg: |
-      Distribution: {{ ansible_distribution }}
-      - version: {{ ansible_distribution_version }}
-      - major version: {{ ansible_distribution_major_version }}
-      - OS family: {{ ansible_os_family }}
-
-- name: Say hello
-  debug:
-    msg: >
-      Hello from {{
-        _template_lquote + _template_distrocode + _template_rquote
-      }}!
-
-- name: Create a temporary file
-  copy:
-    content: "{{ template_greeting }}"
-    dest: "/tmp/{{ template_tmpfile }}"
-  notify: template handler to report the file has been changed
+# - name: Install packages
+#   package:
+#     name: "{{ __template_packages }}"
+#     state: present
+#
+# - name: Enable {{ __template_service }} service
+#   service:
+#     name: "{{ __template_service }}"
+#     state: started
+#     enabled: yes
+#
+# - name: Generate /etc/{{ __template_config }}
+#   template:
+#     src: "{{ __template_config }}.j2"
+#     dest: /etc/{{ __template_config }}
+#     backup: yes
+#   notify: template handler to restart service

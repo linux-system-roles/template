@@ -24,8 +24,8 @@ the lifetime.
 Example of setting the variables:
 
 ```yaml
-template_greeting: "Hello, World!\n"
-template_tmpfile: "hello_world"
+template_foo: "oof"
+template_bar: "baz"
 ```
 
 ## Dependencies
@@ -42,8 +42,8 @@ passed in as parameters) is always nice for users too:
 ```yaml
 - hosts: all
   vars:
-    template_greeting: "See ya!\n"
-    template_tmpfile: "bye_bye"
+    template_foo: "foo foo!"
+    template_bar: "progress bar"
 
   roles:
     - linux-system-roles.template

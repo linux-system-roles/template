@@ -2,5 +2,8 @@
 ---
 # Put internal variables here with CentOS 6 specific values.
 
-# Exmple:
-_template_distrocode: "CentOS 6"
+# Example:
+__template_packages:
+  - foo
+  - bar
+__template_service: food

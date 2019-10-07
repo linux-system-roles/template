@@ -3,4 +3,7 @@
 # Put internal variables here with CentOS 7 specific values.
 
 # Example:
-_template_distrocode: "CentOS 7"
+__template_packages:
+  - foo
+  - bar
+__template_service: food

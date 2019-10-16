@@ -3,4 +3,4 @@
 # Put the role's internal variables here that are not distribution specific.
 
 # Examples of non-distribution specific (generic) internal variables:
-__template_config: "food.conf"
+__template_foo_config: "foo.conf"

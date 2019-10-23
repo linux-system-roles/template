@@ -25,6 +25,12 @@
 #       - RUN_PYLINT_EXCLUDE
 #       - RUN_PYLINT_DISABLED
 #
+#   * .travis/runblack.sh:
+#
+#       - RUN_BLACK_INCLUDE
+#       - RUN_BLACK_EXCLUDE
+#       - RUN_BLACK_DISABLED
+#
 
 ##
 # lsr_runcoveralls_hook ARGS

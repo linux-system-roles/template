@@ -35,6 +35,8 @@
 ##
 # lsr_runcoveralls_hook ARGS
 #
+#   ARGS - see .travis/runcoveralls.sh
+#
 # Called from .travis/runcoveralls.sh.
 function lsr_runcoveralls_hook() {
   # Add custom commands here.
@@ -43,6 +45,8 @@ function lsr_runcoveralls_hook() {
 
 ##
 # lsr_runsyspycmd_hook ARGS
+#
+#   ARGS - see .travis/runsyspycmd.sh
 #
 # Called from .travis/runsyspycmd.sh.
 function lsr_runsyspycmd_hook() {

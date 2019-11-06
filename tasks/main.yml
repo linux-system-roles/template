@@ -1,28 +1,34 @@
+# SPDX-License-Identifier: MIT
 ---
-# tasks file for template
+# Put the tasks for your role here.
 
+# An example of how to set distribution and version specific internal variables
+# (defined in vars/ directory):
 - name: Set version specific variables
   include_vars: "{{ item }}"
   with_first_found:
+    - "{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
     - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
     - "{{ ansible_distribution }}.yml"
     - "{{ ansible_os_family }}.yml"
     - "default.yml"
 
-- name: Install packages
+# Examples of some tasks:
+- name: Ensure required packages are installed
   package:
-    name: "{{ SOME_PACKAGE_NAMES_VARIABLE | default([]) }}"
+    name: "{{ __template_packages }}"
     state: present
 
-- name: Enable SUBSYSTEM service
+- name: Ensure required services are enabled and started
   service:
-    name: "{{ SUBSYSTEM_service_name }}"
+    name: "{{ item }}"
     state: started
     enabled: yes
+  loop: "{{ __template_services }}"
 
-- name: Generate /etc/SUBSYSTEM.conf
+- name: Generate a configuration for foo
   template:
-    src: SUBSYSTEM.conf.j2
-    dest: /etc/SUBSYSTEM.conf
+    src: "{{ __template_foo_config }}.j2"
+    dest: /etc/{{ __template_foo_config }}
     backup: yes
-  notify: restart SUBSYSTEM
+  notify: template handler to restart services

@@ -7,3 +7,12 @@
 #
 #       - LSR_EXTRA_PACKAGES
 #
+# Environment variables that not start with LSR_* but have influence on CI
+# process:
+#
+#   * .travis/runblack.sh:
+#
+#       - RUN_BLACK_INCLUDE
+#       - RUN_BLACK_EXCLUDE
+#       - RUN_BLACK_DISABLED
+#

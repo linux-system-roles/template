@@ -22,3 +22,7 @@
 #       - RUN_BLACK_EXCLUDE
 #       - RUN_BLACK_DISABLED
 #
+#   * .travis/runflake8.sh:
+#
+#       - RUN_FLAKE8_DISABLED
+#

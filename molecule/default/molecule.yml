@@ -5,12 +5,7 @@ dependency:
 driver:
   name: docker
 lint: |
-  set -x
-  E=0
-  yamllint -c molecule/default/yamllint.yml . || E=$$?
-  ansible-lint || E=$$?
-  flake8 --statistics . || E=$$?
-  exit $$E
+  ./molecule/default/runlinters.sh
 platforms:
   - name: centos-6
     image: docker.io/linuxsystemroles/centos-6

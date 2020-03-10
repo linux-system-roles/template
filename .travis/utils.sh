@@ -147,3 +147,8 @@ function lsr_compare_pythons() {
 function lsr_venv_python_matches_system_python() {
   lsr_compare_pythons ${1:-python} -eq ${2:-/usr/bin/python3}
 }
+
+# set TOPDIR
+ME=${ME:-$(basename $0)}
+SCRIPTDIR=${SCRIPTDIR:-$(readlink -f $(dirname $0))}
+TOPDIR=$(readlink -f ${SCRIPTDIR}/..)

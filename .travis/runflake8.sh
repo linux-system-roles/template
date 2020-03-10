@@ -11,6 +11,8 @@
 #
 #   RUN_FLAKE8_DISABLED
 #     if set to an arbitrary non-empty value, flake8 will be not executed
+#   RUN_FLAKE8_IGNORE
+#     list of issues to ignore - see flake8 docs
 
 set -e
 
@@ -31,4 +33,6 @@ ENVPYTHON=$(readlink -f $1)
 shift
 
 set -x
-${ENVPYTHON} -m flake8 "$@"
+${ENVPYTHON} -m flake8 \
+  ${RUN_FLAKE8_IGNORE:+--ignore} ${RUN_FLAKE8_IGNORE:-} \
+  "$@"

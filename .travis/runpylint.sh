@@ -18,6 +18,7 @@ set -e
 ME=$(basename $0)
 SCRIPTDIR=$(readlink -f $(dirname $0))
 
+. ${SCRIPTDIR}/utils.sh
 . ${SCRIPTDIR}/config.sh
 
 # Sanitize path in case if running within tox (see

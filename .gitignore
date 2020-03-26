@@ -5,3 +5,10 @@ vault.yml
 /tests/.coverage
 /tests/htmlcov*
 /.tox
+/venv*/
+/.venv/
+.vscode/
+artifacts/
+__pycache__/
+*~
+.pytest_cache/

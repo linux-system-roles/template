@@ -16,6 +16,7 @@
 #
 #       - LSR_PUBLISH_COVERAGE
 #       - LSR_TESTSDIR
+#       - function lsr_runcoveralls_hook
 #
 # Environment variables that not start with LSR_* but have influence on CI
 # process:
@@ -31,8 +32,13 @@
 #       - RUN_BLACK_INCLUDE
 #       - RUN_BLACK_EXCLUDE
 #       - RUN_BLACK_DISABLED
+#       - RUN_BLACK_EXTRA_ARGS
 #
 #   * .travis/runflake8.sh:
 #
 #       - RUN_FLAKE8_DISABLED
+#       - RUN_FLAKE8_IGNORE
 #
+#   * .travis/runsyspycmd.sh:
+#
+#       - function lsr_runsyspycmd_hook

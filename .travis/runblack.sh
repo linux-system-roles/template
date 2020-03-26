@@ -20,6 +20,9 @@
 #
 #   RUN_BLACK_DISABLED
 #     if set to an arbitrary non-empty value, black will be not executed
+#
+#   RUN_BLACK_EXTRA_ARGS
+#     extra cmd line args to pass to black
 
 set -e
 
@@ -67,4 +70,5 @@ set -x
 ${ENVPYTHON} -m black \
   --include "${INCLUDE_ARG:-${RUN_BLACK_INCLUDE:-${DEFAULT_INCLUDE}}}" \
   --exclude "${EXCLUDE_ARG:-${RUN_BLACK_EXCLUDE:-${DEFAULT_EXCLUDE}}}" \
+  ${RUN_BLACK_EXTRA_ARGS:-} \
   "${OTHER_ARGS[@]}"

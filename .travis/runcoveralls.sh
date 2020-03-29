@@ -5,8 +5,7 @@
 # provide a unified way to reporting coverage results across all linux system
 # roles projects.
 
-# The first script argument is a path to Python interpreter, the rest of
-# arguments are passed to coveralls.
+# The given command line arguments are passed to coveralls.
 
 # Environment variables:
 #
@@ -38,11 +37,6 @@ if [[ -z "${LSR_PUBLISH_COVERAGE}" ]]; then
 fi
 
 LSR_TESTSDIR=${LSR_TESTSDIR:-${TOPDIR}/tests}
-
-# Sanitize path in case if running within tox (see
-# https://github.com/tox-dev/tox/issues/1463):
-ENVPYTHON=$(readlink -f $1)
-shift
 
 COVERALLSCMD=$(command -v coveralls)
 
@@ -85,7 +79,7 @@ EOF
 # Rename $COVERAGEFILE to ${COVERAGEFILE}.merge. With this trick, coverage
 # combine applies configuration in $COVERAGERCFILE also to $COVERAGEFILE.
 mv ${COVERAGEFILE} ${COVERAGEFILE}.merge
-${ENVPYTHON} -m coverage combine --append
+python -m coverage combine --append
 
 MAYBE_DEBUG=""
 if [[ "${LSR_PUBLISH_COVERAGE}" == "debug" ]]; then
@@ -93,4 +87,4 @@ if [[ "${LSR_PUBLISH_COVERAGE}" == "debug" ]]; then
 fi
 
 set -x
-${ENVPYTHON} ${COVERALLSCMD} ${MAYBE_DEBUG} "$@"
+python ${COVERALLSCMD} ${MAYBE_DEBUG} "$@"

@@ -38,8 +38,6 @@ fi
 
 LSR_TESTSDIR=${LSR_TESTSDIR:-${TOPDIR}/tests}
 
-COVERALLSCMD=$(command -v coveralls)
-
 # Ensure we are in $LSR_TESTSDIR. It is supposed that if a user wants to submit
 # tests results, $LSR_TESTSDIR always exists.
 cd ${LSR_TESTSDIR}
@@ -87,4 +85,4 @@ if [[ "${LSR_PUBLISH_COVERAGE}" == "debug" ]]; then
 fi
 
 set -x
-python ${COVERALLSCMD} ${MAYBE_DEBUG} "$@"
+coveralls ${MAYBE_DEBUG} "$@"

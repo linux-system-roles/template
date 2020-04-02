@@ -7,7 +7,7 @@ driver:
 lint:
   name: yamllint
   options:
-    config-file: .yamllint_custom.yml
+    config-file: .yamllint.yml
 platforms:
   - name: centos-6
     image: docker.io/linuxsystemroles/centos-6

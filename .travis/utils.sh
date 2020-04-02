@@ -148,7 +148,10 @@ function lsr_get_system_python() {
   if [[ -z "$syspython" ]]; then
     syspython=$(command -pv python2)
   fi
-  echo ${syspython:-/usr/bin/python3}
+  if [[ -z "$syspython" ]]; then
+    lsr_error Could not determine system python path
+  fi
+  echo $syspython
 }
 
 ##
@@ -156,14 +159,32 @@ function lsr_get_system_python() {
 #
 #   $1 - command or full path to venv Python interpreter (default: python)
 #   $2 - command or full path to the system Python interpreter
-#        (default: /usr/bin/python3 or /usr/bin/python or /usr/bin/python2)
-#
+#        (default: system python as determined by lsr_get_system_python())
 # Exit with 0 if virtual environment Python version matches the system Python
 # version.
 function lsr_venv_python_matches_system_python() {
   local syspython="${2:-$(lsr_get_system_python)}"
 
-  lsr_compare_pythons ${1:-python} -eq ${syspython:-/usr/bin/python3}
+  lsr_compare_pythons ${1:-python} -eq $syspython
+}
+
+##
+# lsr_setup_module_utils [$1] [$2]
+#
+#   $1 - path to the ansible/module_utils/ directory in the venv
+#        assumes ansible has been installed in the venv
+#        defaults to env var $SRC_MODULE_UTILS_DIR
+#   $2 - path to the local module_utils/ directory for the role
+#        defaults to env var $DEST_MODULE_UTILS_DIR
+#
+# Exit with 0 if virtual environment Python version matches the system Python
+# version.
+function lsr_setup_module_utils() {
+  local srcdir=${1:-$SRC_MODULE_UTILS_DIR}
+  local destdir=${2:-$DEST_MODULE_UTILS_DIR}
+  if [ -n "$srcdir" -a -d "$srcdir" -a -n "$destdir" -a -d "$destdir" ]; then
+    bash $TOPDIR/tests/setup_module_utils.sh "$srcdir" "$destdir"
+  fi
 }
 
 # set TOPDIR

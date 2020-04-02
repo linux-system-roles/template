@@ -6,7 +6,14 @@ if [ -n "${DEBUG:-}" ] ; then
     set -x
 fi
 
-if [ ! -d "${1:-}" -o ! -d "${2:-}" ] ; then
+if [ ! -d "${1:-}" ] ; then
+    echo Either ansible is not installed, or there is no ansible/module_utils
+    echo in $1 - Skipping
+    exit 0
+fi
+
+if [ ! -d "${2:-}" ] ; then
+    echo Role has no module_utils - Skipping
     exit 0
 fi
 

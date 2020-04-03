@@ -37,7 +37,7 @@
 #   * .travis/runflake8.sh:
 #
 #       - RUN_FLAKE8_DISABLED
-#       - RUN_FLAKE8_IGNORE
+#       - RUN_FLAKE8_EXTRA_ARGS
 #
 #   * .travis/runsyspycmd.sh:
 #

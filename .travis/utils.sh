@@ -160,6 +160,7 @@ function lsr_get_system_python() {
 #   $1 - command or full path to venv Python interpreter (default: python)
 #   $2 - command or full path to the system Python interpreter
 #        (default: system python as determined by lsr_get_system_python())
+#
 # Exit with 0 if virtual environment Python version matches the system Python
 # version.
 function lsr_venv_python_matches_system_python() {

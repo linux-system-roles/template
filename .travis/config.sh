@@ -26,6 +26,7 @@
 #       - RUN_PYLINT_INCLUDE
 #       - RUN_PYLINT_EXCLUDE
 #       - RUN_PYLINT_DISABLED
+#       - RUN_PYLINT_SETUP_MODULE_UTILS
 #
 #   * .travis/runblack.sh:
 #
@@ -37,14 +38,12 @@
 #   * .travis/runflake8.sh:
 #
 #       - RUN_FLAKE8_DISABLED
-#       - RUN_FLAKE8_IGNORE
+#       - RUN_FLAKE8_EXTRA_ARGS
 #
 #   * .travis/runsyspycmd.sh:
 #
 #       - function lsr_runsyspycmd_hook
-
-# if your script needs to setup module_utils so that your
-# module_utils/ code can be resolved by the default
-# pythonpath resolver, an IDE, etc. then call
-# lsr_setup_module_utils
-# here
+#
+#   * .travis/runpytest.sh:
+#
+#       - RUN_PYTEST_SETUP_MODULE_UTILS

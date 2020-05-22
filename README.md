@@ -28,6 +28,20 @@ template_foo: "oof"
 template_bar: "baz"
 ```
 
+### Variables Exported by the Role
+
+This section is optional.  Some roles may export variables for playbooks to
+use later.  These are analogous to "return values" in Ansible modules.  For
+example, if a role performs some action that will require a system reboot, but
+the user wants to defer the reboot, the role might set a variable like
+`template_reboot_needed: true` that the playbook can use to reboot at a more
+convenient time.
+
+Example:
+
+`template_reboot_needed` - default `false` - if `true`, this means
+a reboot is needed to apply the changes made by the role
+
 ## Dependencies
 
 A list of other roles hosted on Galaxy should go here, plus any details in

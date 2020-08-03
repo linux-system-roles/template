@@ -1,3 +1,4 @@
+#!/bin/bash
 # SPDX-License-Identifier: MIT
 #
 # Use this file to specify custom configuration for a project. Generally, this

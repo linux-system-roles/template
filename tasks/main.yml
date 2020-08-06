@@ -3,15 +3,20 @@
 # Put the tasks for your role here.
 
 # An example of how to set distribution and version specific internal variables
-# (defined in vars/ directory):
-- name: Set version specific variables
-  include_vars: "{{ item }}"
-  with_first_found:
-    - "{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
-    - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
-    - "{{ ansible_distribution }}.yml"
-    - "{{ ansible_os_family }}.yml"
-    - "default.yml"
+# (defined in vars/ directory)
+# see https://github.com/oasis-roles/meta_standards#platform-specific-variables
+- name: Set platform/version specific variables
+  include_vars: "{{ __template_vars_file }}"
+  loop:
+    - "{{ ansible_facts['os_family'] }}.yml"
+    - "{{ ansible_facts['distribution'] }}.yml"
+    - "{{ ansible_facts['distribution'] ~ '_' ~
+          ansible_facts['distribution_major_version'] }}.yml"
+    - "{{ ansible_facts['distribution'] ~ '_' ~
+          ansible_facts['distribution_version'] }}.yml"
+  vars:
+    __template_vars_file: "{{ role_path }}/vars/{{ item }}"
+  when: __template_vars_file is file
 
 # Examples of some tasks:
 - name: Ensure required packages are installed

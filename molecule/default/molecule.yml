@@ -3,7 +3,7 @@
 dependency:
   name: galaxy
 driver:
-  name: docker
+  name: ${LSR_MOLECULE_DRIVER:-docker}
 lint: |
   set -eux
   ansible-lint -v

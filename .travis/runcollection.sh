@@ -20,7 +20,6 @@ envlist=${3:- "black,flake8,yamllint,py38,shellcheck"}
 automaintenancerepo=https://raw.githubusercontent.com/linux-system-roles/auto-maintenance/
 
 curl -L -o lsr_role2collection.py "${automaintenancerepo}${STABLE_TAG}"/lsr_role2collection.py
-curl -L -o ansible_role_parser.py "${automaintenancerepo}${STABLE_TAG}"/ansible_role_parser.py
 
 python lsr_role2collection.py --src-path "${TOPDIR}/.." --dest-path "${toxworkdir}" --role "${role}" > "${toxworkdir}"/collection.out 2>&1
 

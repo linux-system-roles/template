@@ -63,6 +63,9 @@ passed in as parameters) is always nice for users too:
     - linux-system-roles.template
 ```
 
+More examples can be provided in the [`examples/`](examples) directory. These
+can be useful especially for documentation.
+
 ## License
 
 Whenever possible, please prefer MIT.

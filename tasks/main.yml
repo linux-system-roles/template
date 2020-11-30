@@ -10,10 +10,12 @@
   loop:
     - "{{ ansible_facts['os_family'] }}.yml"
     - "{{ ansible_facts['distribution'] }}.yml"
-    - "{{ ansible_facts['distribution'] ~ '_' ~
-          ansible_facts['distribution_major_version'] }}.yml"
-    - "{{ ansible_facts['distribution'] ~ '_' ~
-          ansible_facts['distribution_version'] }}.yml"
+    - >-
+      {{ ansible_facts['distribution'] ~ '_' ~
+      ansible_facts['distribution_major_version'] }}.yml
+    - >-
+      {{ ansible_facts['distribution'] ~ '_' ~
+      ansible_facts['distribution_version'] }}.yml
   vars:
     __template_vars_file: "{{ role_path }}/vars/{{ item }}"
   when: __template_vars_file is file

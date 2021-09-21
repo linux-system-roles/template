@@ -2,7 +2,7 @@
 #
 # Example of a template of configuration file
 #
-# {{ ansible_managed }}
+{{ ansible_managed | comment }}
 [foo]
 foo = {{ template_foo }}
 bar = {{ template_bar }}

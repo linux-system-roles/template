@@ -8,3 +8,9 @@
 __template_foo_config: "foo.conf"
 __template_packages: []
 __template_services: []
+# ansible_facts required by the role
+__template_required_facts:
+  - distribution
+  - distribution_major_version
+  - distribution_version
+  - os_family

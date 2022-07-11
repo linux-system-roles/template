@@ -1,5 +1,5 @@
 # Role Name
-![CI Testing](https://github.com/linux-system-roles/template/workflows/tox/badge.svg)
+![template](https://github.com/linux-system-roles/template/workflows/tox/badge.svg)
 
 A template for an ansible role which configures some GNU/Linux subsystem or
 service. A brief description of the role goes here.

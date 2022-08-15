@@ -40,6 +40,6 @@ jobs:
           36) toxenvs="${toxenvs},coveralls,black,yamllint,shellcheck" ;;
           38) toxenvs="${toxenvs},coveralls,ansible-lint,ansible-plugin-scan,collection,ansible-test" ;;
           39) toxenvs="${toxenvs},coveralls,ansible-managed-var-comment" ;;
-          310) toxenvs="${toxenvs},coveralls,custom" ;;
+          310) toxenvs="${toxenvs},coveralls,custom,check-meta-versions" ;;
           esac
           TOXENV="$toxenvs" lsr_ci_runtox

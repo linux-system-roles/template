@@ -3,6 +3,7 @@
 # Example of a template of configuration file
 #
 {{ ansible_managed | comment }}
+{{ "system_role:rolename" | comment(prefix="", postfix="") }}
 [foo]
 foo = {{ template_foo }}
 bar = {{ template_bar }}

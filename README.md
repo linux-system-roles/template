@@ -1,12 +1,13 @@
 # Role Name
+
 ![template](https://github.com/linux-system-roles/template/workflows/tox/badge.svg)
 
-A template for an ansible role which configures some GNU/Linux subsystem or
+A template for an ansible role that configures some GNU/Linux subsystem or
 service. A brief description of the role goes here.
 
 ## Requirements
 
-Any pre-requisites that may not be covered by Ansible itself or the role should
+Any prerequisites that may not be covered by Ansible itself or the role should
 be mentioned here. For instance, if the role uses the EC2 module, it may be a
 good idea to mention in this section that the `boto` package is required.
 
@@ -14,7 +15,17 @@ good idea to mention in this section that the `boto` package is required.
 
 A description of all input variables (i.e. variables that are defined in
 `defaults/main.yml`) for the role should go here as these form an API of the
-role.
+role.  Each variable should have its own section e.g.
+
+### template_foo
+
+This variable is required.  It is a string that lists the foo of the role.
+There is no default value.
+
+### template_bar
+
+This variable is optional.  It is a boolean that tells the role to disable bar.
+The default value is `true`.
 
 Variables that are not intended as input, like variables defined in
 `vars/main.yml`, variables that are read from other roles and/or the global
@@ -26,10 +37,10 @@ Example of setting the variables:
 
 ```yaml
 template_foo: "oof"
-template_bar: "baz"
+template_bar: false
 ```
 
-### Variables Exported by the Role
+## Variables Exported by the Role
 
 This section is optional.  Some roles may export variables for playbooks to
 use later.  These are analogous to "return values" in Ansible modules.  For
@@ -40,8 +51,10 @@ convenient time.
 
 Example:
 
-`template_reboot_needed` - default `false` - if `true`, this means
-a reboot is needed to apply the changes made by the role
+### template_reboot_needed
+
+Default `false` - if `true`, this means a reboot is needed to apply the changes
+made by the role
 
 ## Dependencies
 
@@ -55,17 +68,17 @@ Including an example of how to use your role (for instance, with variables
 passed in as parameters) is always nice for users too:
 
 ```yaml
-- hosts: all
+- name: Manage the template subsystem
+  hosts: all
   vars:
     template_foo: "foo foo!"
-    template_bar: "progress bar"
-
+    template_bar: false
   roles:
     - linux-system-roles.template
 ```
 
 More examples can be provided in the [`examples/`](examples) directory. These
-can be useful especially for documentation.
+can be useful, especially for documentation.
 
 ## License
 

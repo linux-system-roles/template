@@ -4,5 +4,6 @@
   hosts: all
   vars:
     template_foo: example variable value
+    template_bar: false
   roles:
     - linux-system-roles.template

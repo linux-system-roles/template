@@ -8,8 +8,20 @@ service. A brief description of the role goes here.
 ## Requirements
 
 Any prerequisites that may not be covered by Ansible itself or the role should
-be mentioned here. For instance, if the role uses the EC2 module, it may be a
-good idea to mention in this section that the `boto` package is required.
+be mentioned here.  This includes platform dependencies not managed by the
+role, hardware requirements, external collections, etc.  There should be a
+distinction between *control node* requirements (like collections) and
+*managed node* requirements (like special hardware, platform provisioning).
+
+For instance, if the role depends on some collections and
+has a `meta/collection-requirements.yml` file for installing those
+dependencies, it should be mentioned here that the user should run
+
+```
+ansible-galaxy collection install -vv -r meta/collection-requirements.yml
+```
+
+on the *control node* before using the role.
 
 ## Role Variables
 
@@ -55,12 +67,6 @@ Example:
 
 Default `false` - if `true`, this means a reboot is needed to apply the changes
 made by the role
-
-## Dependencies
-
-A list of other roles hosted on Galaxy should go here, plus any details in
-regards to parameters that may need to be set for other roles, or variables
-that are used from other roles.
 
 ## Example Playbook
 

@@ -13,6 +13,9 @@ role, hardware requirements, external collections, etc.  There should be a
 distinction between *control node* requirements (like collections) and
 *managed node* requirements (like special hardware, platform provisioning).
 
+
+### Collection requirements
+
 For instance, if the role depends on some collections and
 has a `meta/collection-requirements.yml` file for installing those
 dependencies, it should be mentioned here that the user should run

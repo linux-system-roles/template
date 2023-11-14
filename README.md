@@ -17,9 +17,10 @@ distinction between *control node* requirements (like collections) and
 
 ### Collection requirements
 
-For instance, if the role depends on some collections and
-has a `meta/collection-requirements.yml` file for installing those
-dependencies, it should be mentioned here that the user should run
+For instance, if the role depends on some collections and has a
+`meta/collection-requirements.yml` file for installing those dependencies, and
+in order to manage `rpm-ostree` systems, it should be mentioned here that the
+ user should run
 
 ```bash
 ansible-galaxy collection install -vv -r meta/collection-requirements.yml
@@ -89,6 +90,10 @@ passed in as parameters) is always nice for users too:
 
 More examples can be provided in the [`examples/`](examples) directory. These
 can be useful, especially for documentation.
+
+## rpm-ostree
+
+See README-ostree.md
 
 ## License
 

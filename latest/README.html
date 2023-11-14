@@ -154,6 +154,7 @@ id="toc-template_reboot_needed">template_reboot_needed</a></li>
 </ul></li>
 <li><a href="#example-playbook" id="toc-example-playbook">Example
 Playbook</a></li>
+<li><a href="#rpm-ostree" id="toc-rpm-ostree">rpm-ostree</a></li>
 <li><a href="#license" id="toc-license">License</a></li>
 <li><a href="#author-information" id="toc-author-information">Author
 Information</a></li>
@@ -175,7 +176,8 @@ hardware, platform provisioning).</p>
 <h2 id="collection-requirements">Collection requirements</h2>
 <p>For instance, if the role depends on some collections and has a
 <code>meta/collection-requirements.yml</code> file for installing those
-dependencies, it should be mentioned here that the user should run</p>
+dependencies, and in order to manage <code>rpm-ostree</code> systems, it
+should be mentioned here that the user should run</p>
 <div class="sourceCode" id="cb1"><pre
 class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ansible-galaxy</span> collection install <span class="at">-vv</span> <span class="at">-r</span> meta/collection-requirements.yml</span></code></pre></div>
 <p>on the <em>control node</em> before using the role.</p>
@@ -225,6 +227,8 @@ class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="
 <p>More examples can be provided in the <a
 href="examples"><code>examples/</code></a> directory. These can be
 useful, especially for documentation.</p>
+<h1 id="rpm-ostree">rpm-ostree</h1>
+<p>See README-ostree.md</p>
 <h1 id="license">License</h1>
 <p>Whenever possible, please prefer MIT.</p>
 <h1 id="author-information">Author Information</h1>

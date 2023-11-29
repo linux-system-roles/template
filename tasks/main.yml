@@ -8,6 +8,8 @@
   package:
     name: "{{ __template_packages }}"
     state: present
+    use: "{{ (__template_is_ostree | d(false)) |
+             ternary('ansible.posix.rhel_rpm_ostree', omit) }}"
 
 - name: Ensure required services are enabled and started
   service:

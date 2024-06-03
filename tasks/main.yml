@@ -23,5 +23,5 @@
     src: "{{ __template_foo_config }}.j2"
     dest: /etc/{{ __template_foo_config }}
     backup: true
-    mode: 0400
+    mode: "0400"
   notify: Handler for template to restart services

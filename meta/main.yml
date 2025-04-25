@@ -17,4 +17,10 @@ galaxy_info:
     - el9
     - el10
     - fedora
+    # Support running this role in system container environments, and enable
+    # tests. Remove if not applicable.
+    - container
+    # Support running this role during container builds (mostly useful for
+    # bootc), and enable tests. Remove if not applicable.
+    - containerbuild
 dependencies: []

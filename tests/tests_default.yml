@@ -2,10 +2,11 @@
 ---
 - name: Ensure that the role runs with default parameters
   hosts: all
-  gather_facts: false  # test that role works in this case
-  roles:
-    - linux-system-roles.template
   tasks:
+    - name: Run role with cleared facts
+      include_tasks: tasks/run_role_with_clear_facts.yml
+      vars:
+        __sr_public: true
     - name: Check header for ansible_managed, fingerprint
       include_tasks: tasks/check_header.yml
       vars:

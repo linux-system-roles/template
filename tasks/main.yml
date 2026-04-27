@@ -25,3 +25,9 @@
     backup: true
     mode: "0400"
   notify: Handler for template to restart services
+
+- name: Record role success fingerprint
+  sr_fingerprint:
+    sr_message: >-
+      success system_role:template ansible_version={{ ansible_version.full }}
+      {{ ansible_facts['distribution'] }}-{{ ansible_facts['distribution_version'] }}

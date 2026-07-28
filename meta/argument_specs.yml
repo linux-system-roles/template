@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: MIT
+---
+argument_specs:
+  main:
+    short_description: Basic template for Linux system roles
+    options:
+      template_foo:
+        type: str
+      template_bar:
+        type: bool

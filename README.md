@@ -30,6 +30,8 @@ on the *control node* before using the role.
 
 ## Role Variables
 
+Validation is enforced by `meta/argument_specs.yml`.
+
 A description of all input variables (i.e. variables that are defined in
 `defaults/main.yml`) for the role should go here as these form an API of the
 role.  Each variable should have its own section e.g.

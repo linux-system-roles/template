@@ -145,17 +145,6 @@ id="toc-collection-requirements">Collection requirements</a></li>
 <ul>
 <li><a href="#template_foo" id="toc-template_foo">template_foo</a></li>
 <li><a href="#template_bar" id="toc-template_bar">template_bar</a></li>
-<li><a href="#template_baz" id="toc-template_baz">template_baz</a></li>
-<li><a href="#template_config_path"
-id="toc-template_config_path">template_config_path</a></li>
-<li><a href="#template_state"
-id="toc-template_state">template_state</a></li>
-<li><a href="#template_packages"
-id="toc-template_packages">template_packages</a></li>
-<li><a href="#template_raw_value"
-id="toc-template_raw_value">template_raw_value</a></li>
-<li><a href="#template_services"
-id="toc-template_services">template_services</a></li>
 </ul></li>
 <li><a href="#variables-exported-by-the-role"
 id="toc-variables-exported-by-the-role">Variables Exported by the
@@ -194,68 +183,16 @@ should be mentioned here that the user should run</p>
 class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ansible-galaxy</span> collection install <span class="at">-vv</span> <span class="at">-r</span> meta/collection-requirements.yml</span></code></pre></div>
 <p>on the <em>control node</em> before using the role.</p>
 <h1 id="role-variables">Role Variables</h1>
-<p>Validation is enforced by <code>meta/argument_specs.yml</code>.</p>
 <p>A description of all input variables (i.e. variables that are defined
 in <code>defaults/main.yml</code>) for the role should go here as these
 form an API of the role. Each variable should have its own section
 e.g.</p>
 <h2 id="template_foo">template_foo</h2>
-<p>A string variable for the foo setting. The default value is
-<code>"foo"</code>.</p>
+<p>This variable is required. It is a string that lists the foo of the
+role. There is no default value.</p>
 <h2 id="template_bar">template_bar</h2>
-<p>A boolean variable that enables or disables the bar feature. The
-default value is <code>true</code>.</p>
-<h2 id="template_baz">template_baz</h2>
-<p>An integer variable for a numeric setting. The default value is
-<code>0</code>.</p>
-<h2 id="template_config_path">template_config_path</h2>
-<p>Filesystem path to the configuration file. The default value is
-<code>"/etc/template.conf"</code>.</p>
-<h2 id="template_state">template_state</h2>
-<p>Desired state of the template subsystem. Must be one of
-<code>enabled</code> or <code>disabled</code>. The default value is
-<code>"enabled"</code>.</p>
-<h2 id="template_packages">template_packages</h2>
-<p>A list of package names (strings). The default value is
-<code>[]</code>.</p>
-<h2 id="template_raw_value">template_raw_value</h2>
-<p>A variable that accepts values of different types (e.g. a string or a
-list). The default value is <code>""</code>.</p>
-<h2 id="template_services">template_services</h2>
-<p>A list of service configurations. Each entry is a dictionary with the
-following keys:</p>
-<table>
-<thead>
-<tr>
-<th>Key</th>
-<th>Type</th>
-<th>Required</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>name</code></td>
-<td>str</td>
-<td>yes</td>
-<td>Name of the service.</td>
-</tr>
-<tr>
-<td><code>type</code></td>
-<td>str</td>
-<td>no</td>
-<td>Type of the service. One of <code>simple</code>,
-<code>forking</code>, <code>oneshot</code>.</td>
-</tr>
-<tr>
-<td><code>enabled</code></td>
-<td>bool</td>
-<td>no</td>
-<td>Whether the service should be enabled at boot.</td>
-</tr>
-</tbody>
-</table>
-<p>The default value is <code>[]</code>.</p>
+<p>This variable is optional. It is a boolean that tells the role to
+disable bar. The default value is <code>true</code>.</p>
 <p>Variables that are not intended as input, like variables defined in
 <code>vars/main.yml</code>, variables that are read from other roles
 and/or the global scope (ie. hostvars, group vars, etc.) can be also
@@ -264,22 +201,7 @@ the role API they may change during the lifetime.</p>
 <p>Example of setting the variables:</p>
 <div class="sourceCode" id="cb2"><pre
 class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">template_foo</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;oof&quot;</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">template_bar</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">template_baz</span><span class="kw">:</span><span class="at"> </span><span class="dv">42</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">template_config_path</span><span class="kw">:</span><span class="at"> /etc/myapp/config.yml</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">template_state</span><span class="kw">:</span><span class="at"> disabled</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">template_packages</span><span class="kw">:</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> vim</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> tmux</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">template_raw_value</span><span class="kw">:</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> first</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> second</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">template_services</span><span class="kw">:</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> httpd</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> forking</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">enabled</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> my-worker</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> simple</span></span></code></pre></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">template_bar</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span></code></pre></div>
 <h1 id="variables-exported-by-the-role">Variables Exported by the
 Role</h1>
 <p>This section is optional. Some roles may export variables for
@@ -301,14 +223,8 @@ class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">vars</span><span class="kw">:</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">template_foo</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;foo foo!&quot;</span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">template_bar</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">template_baz</span><span class="kw">:</span><span class="at"> </span><span class="dv">42</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">template_state</span><span class="kw">:</span><span class="at"> disabled</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">template_services</span><span class="kw">:</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> httpd</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">type</span><span class="kw">:</span><span class="at"> forking</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">enabled</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">roles</span><span class="kw">:</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> linux-system-roles.template</span></span></code></pre></div>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">roles</span><span class="kw">:</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> linux-system-roles.template</span></span></code></pre></div>
 <p>More examples can be provided in the <a
 href="examples"><code>examples/</code></a> directory. These can be
 useful, especially for documentation.</p>

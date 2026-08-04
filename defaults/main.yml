@@ -6,9 +6,3 @@
 # Examples of role input variables:
 template_foo: foo
 template_bar: true
-template_baz: 0
-template_config_path: /etc/template.conf
-template_state: enabled
-template_packages: []
-template_raw_value: ""
-template_services: []

@@ -38,51 +38,13 @@ role.  Each variable should have its own section e.g.
 
 ### template_foo
 
-A string variable for the foo setting.
-The default value is `"foo"`.
+This variable is required.  It is a string that lists the foo of the role.
+There is no default value.
 
 ### template_bar
 
-A boolean variable that enables or disables the bar feature.
+This variable is optional.  It is a boolean that tells the role to disable bar.
 The default value is `true`.
-
-### template_baz
-
-An integer variable for a numeric setting.
-The default value is `0`.
-
-### template_config_path
-
-Filesystem path to the configuration file.
-The default value is `"/etc/template.conf"`.
-
-### template_state
-
-Desired state of the template subsystem.  Must be one of `enabled`
-or `disabled`.  The default value is `"enabled"`.
-
-### template_packages
-
-A list of package names (strings).
-The default value is `[]`.
-
-### template_raw_value
-
-A variable that accepts values of different types (e.g. a string or a list).
-The default value is `""`.
-
-### template_services
-
-A list of service configurations.  Each entry is a dictionary with the
-following keys:
-
-| Key | Type | Required | Description |
-|-----|------|----------|-------------|
-| `name` | str | yes | Name of the service. |
-| `type` | str | no | Type of the service.  One of `simple`, `forking`, `oneshot`. |
-| `enabled` | bool | no | Whether the service should be enabled at boot. |
-
-The default value is `[]`.
 
 Variables that are not intended as input, like variables defined in
 `vars/main.yml`, variables that are read from other roles and/or the global
@@ -95,21 +57,6 @@ Example of setting the variables:
 ```yaml
 template_foo: "oof"
 template_bar: false
-template_baz: 42
-template_config_path: /etc/myapp/config.yml
-template_state: disabled
-template_packages:
-  - vim
-  - tmux
-template_raw_value:
-  - first
-  - second
-template_services:
-  - name: httpd
-    type: forking
-    enabled: true
-  - name: my-worker
-    type: simple
 ```
 
 ## Variables Exported by the Role
@@ -139,12 +86,6 @@ passed in as parameters) is always nice for users too:
   vars:
     template_foo: "foo foo!"
     template_bar: false
-    template_baz: 42
-    template_state: disabled
-    template_services:
-      - name: httpd
-        type: forking
-        enabled: true
   roles:
     - linux-system-roles.template
 ```

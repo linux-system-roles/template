@@ -6,26 +6,31 @@ argument_specs:
     options:
       template_foo:
         type: str
+        required: false
         description: >-
           A string variable for the foo setting.
 
       template_bar:
         type: bool
+        required: false
         description: >-
           A boolean variable that enables or disables the bar feature.
 
       template_baz:
         type: int
+        required: false
         description: >-
           An integer variable for a numeric setting.
 
       template_config_path:
         type: path
+        required: false
         description: >-
           Filesystem path to the configuration file.
 
       template_state:
         type: str
+        required: false
         choices:
           - enabled
           - disabled
@@ -36,12 +41,14 @@ argument_specs:
       template_packages:
         type: list
         elements: str
+        required: false
         description: >-
           A list of package names.  Use elements to declare the type
           of each item in the list.
 
       template_raw_value:
         type: raw
+        required: false
         description: >-
           A variable that accepts values of different types.  Use raw
           when the variable can be either a string or a list, for
@@ -50,6 +57,7 @@ argument_specs:
       template_services:
         type: list
         elements: dict
+        required: false
         description: >-
           A list of service configurations.  Each entry is a dictionary
           with its own set of options.  Use this pattern when the role
@@ -63,6 +71,7 @@ argument_specs:
               it must always be provided.
           type:
             type: str
+            required: false
             choices:
               - simple
               - forking
@@ -72,5 +81,6 @@ argument_specs:
               the same way as at the top level.
           enabled:
             type: bool
+            required: false
             description: >-
               Whether the service should be enabled at boot.

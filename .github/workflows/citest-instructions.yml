@@ -61,7 +61,7 @@ jobs:
           | Command | Check name | Description |
           | --- | --- | --- |
           | `/citest all` | All checks listed below | Run every CI test available for this role |
-          | `/citest linters` | Lint and lightweight checks | Run ansible-lint, ansible-test, ansible-managed-var-comment, codespell, markdownlint, pr-title-lint, test_converting_readme, and codeql, python-unit-test, and shellcheck when those workflows exist |
+          | `/citest linters` | Lint and lightweight checks | Run ansible-lint, ansible-test, ansible-managed-var-comment, codespell, markdownlint, pr-title-lint, check-docs-updated, and codeql, python-unit-test, and shellcheck when those workflows exist |
           | `/citest integration` | QEMU/container and Testing Farm checks | Run qemu-kvm-integration-tests and tft |
           | `/citest ansible-lint` | `Ansible Lint / ansible_lint (<ansible-lint>, <ansible>, <python>) (pull_request)` | Lint Ansible content after converting the role to collection format |
           | `/citest ansible-managed-var-comment` | `Check for ansible_managed variable use in comments / ansible_managed_var_comment (pull_request)` | Fail if `ansible_managed` is used in comments |
@@ -70,7 +70,7 @@ jobs:
           | `/citest markdownlint` | `Markdown Lint / markdownlint (pull_request)` | Lint Markdown files |
           | `/citest pr-title-lint` | `PR Title Lint / commit-checks` | Check that the pull request title follows the required format |
           | `/citest qemu-kvm-integration-tests` | `Test / scenario (<image>, <env>) (pull_request)` | Run role integration tests in QEMU VMs and containers |
-          | `/citest test_converting_readme` | `Test converting README.md to README.html / test_converting_readme (pull_request)` | Convert README.md to HTML |
+          | `/citest check-docs-updated` | `Run CI tests / check_docs (pull_request)` | Rebuild README.md and README.html from argument_specs and fail if they are out of date |
           | `/citest tft` | `<platform>\|ansible-<version>` | Run integration tests in Testing Farm |
           | `/citest woke` | `Woke / Detect non-inclusive language (pull_request)` | Detect non-inclusive language |
 

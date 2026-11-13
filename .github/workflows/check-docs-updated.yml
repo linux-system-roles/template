@@ -1,6 +1,6 @@
 ---
 # yamllint disable rule:line-length
-name: Test converting README.md to README.html
+name: Check that README files are updated when specs change
 on:  # yamllint disable-line rule:truthy
   workflow_call:
     inputs:
@@ -14,7 +14,7 @@ permissions:
   # This is required for the ability to create/update the Pull request status
   statuses: write
 jobs:
-  test_converting_readme:
+  check_docs:
     if: inputs.requested || github.event_name != 'issue_comment'
     runs-on: ubuntu-latest
     permissions:
@@ -58,23 +58,40 @@ jobs:
           persist-credentials: false
           ref: ${{ steps.head_sha_context.outputs.head_sha || github.sha }}
 
-      - name: Remove badges from README.md prior to converting to HTML
-        run: sed -i '1,8 {/^\[\!.*actions\/workflows/d}' README.md
+      - name: Set up Python
+        uses: actions/setup-python@v7.1.0
 
-      - name: Convert README.md to HTML
-        uses: linux-system-roles/.github/github-actions/pandoc@main
-        with:
-          image: pandoc/core@sha256:62518bfb6833705dc90a1634d8d879299bd820b3f74ad3b32fba8b618452553a
-          args: >-
-            --from gfm --to html5 --toc --shift-heading-level-by=-1
-            --template .pandoc_template.html5
-            --output README.html README.md
+      - name: Install tox and tox-lsr
+        run: |
+          set -euxo pipefail
+          pip install tox
+          pip install "git+https://github.com/linux-system-roles/tox-lsr@b30596c6fd1863b2eed20206ef32d13eac478e18"
 
-      - name: Upload README.html as an artifact
-        uses: actions/upload-artifact@v7.0.2
-        with:
-          name: README.html
-          path: README.html
+      - name: Build documentation from argument_specs
+        run: tox -e build-docs
+
+      - name: Check whether README files are up to date
+        run: |
+          set -euo pipefail
+          # Fail if the generated docs are not tracked - otherwise an untracked
+          # README.html would not show up in the diff and the check would
+          # silently pass while the committed docs are missing or stale.
+          if ! git ls-files --error-unmatch README.md README.html >/dev/null 2>&1; then
+            echo "README.md and/or README.html is not tracked in git"
+            echo "Run 'tox -e build-docs' locally and commit both files."
+            exit 1
+          fi
+          if git diff --exit-code README.md README.html; then
+            echo "README files are up-to-date"
+          else
+            echo "README files are out-of-date"
+            echo "meta/argument_specs.yml or meta/extra_specs.yml was modified,"
+            echo "but README.md and/or README.html were not regenerated."
+            echo "Run 'tox -e build-docs' locally and commit the changes."
+            echo "For instructions on how to install tox-lsr, see:"
+            echo "  https://github.com/linux-system-roles/tox-lsr"
+            exit 1
+          fi
 
       - name: Set final commit status
         if: always() && github.event_name == 'issue_comment' && steps.head_sha_context.outputs.head_sha != ''

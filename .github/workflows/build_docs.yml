@@ -1,0 +1,152 @@
+---
+# yamllint disable rule:line-length
+name: Convert README.md to HTML and push to docs branch
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - main
+    paths:
+      - README.md
+  release:
+    types:
+      - published
+permissions:
+  contents: read
+jobs:
+  # Pandoc runs in an isolated read-only job so a compromised container cannot
+  # use a runner-mounted contents: write credential to push.
+  build_docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out README and Pandoc template
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            README.md
+            .pandoc_template.html5
+          sparse-checkout-cone-mode: false
+      - name: Set RELEASE_VERSION based on whether run on release or on push
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euxo pipefail
+          if [ ${{ github.event_name }} = release ]; then
+            tag_name="$RELEASE_TAG"
+            if [[ "$tag_name" =~ ^[0-9]+[.][0-9]+[.][0-9]+$ ]]; then
+              echo "RELEASE_VERSION=$tag_name" >> $GITHUB_ENV
+            else
+              echo "RELEASE_VERSION=${{ github.event.release.id }}" >> $GITHUB_ENV
+            fi
+          elif [ ${{ github.event_name }} = push ]; then
+            echo "RELEASE_VERSION=latest" >> $GITHUB_ENV
+          else
+            echo Unsupported event
+            exit 1
+          fi
+
+      - name: Ensure that version directory exists
+        run: mkdir -p ${{ env.RELEASE_VERSION }}
+
+      - name: Remove badges from README.md prior to converting to HTML
+        run: sed -i '1,8 {/^\[\!.*actions\/workflows/d}' README.md
+
+      - name: Convert README.md to HTML and save to the version directory
+        uses: linux-system-roles/.github/github-actions/pandoc@main
+        with:
+          args: >-
+            --from gfm --to html5 --toc --shift-heading-level-by=-1
+            --template .pandoc_template.html5
+            --output ${{ env.RELEASE_VERSION }}/README.html README.md
+
+      - name: Upload docs HTML artifact
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: docs-html
+          path: ${{ env.RELEASE_VERSION }}/README.html
+
+  publish_docs:
+    needs: build_docs
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - name: Update pip, git
+        run: |
+          set -euxo pipefail
+          sudo apt update
+          sudo apt install -y git
+
+      - name: Check out code
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: true  # needed for docs branch initialization push
+          fetch-depth: 0
+      - name: Ensure the docs branch
+        run: |
+          set -euxo pipefail
+          branch=docs
+          existed_in_remote=$(git ls-remote --heads origin $branch)
+
+          if [ -z "${existed_in_remote}" ]; then
+            echo "Creating $branch branch"
+            git config --global user.name "$GITHUB_ACTOR"
+            git config --global user.email "$GITHUB_ACTOR@users.noreply.github.com"
+            git checkout --orphan $branch
+            git reset --hard
+            git commit --allow-empty -m "Initializing $branch branch"
+            git push origin $branch
+            echo "Created $branch branch"
+          else
+            echo "Branch $branch already exists"
+          fi
+
+      - name: Checkout the docs branch
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: docs
+          persist-credentials: true  # needed for commit and push
+      - name: Set RELEASE_VERSION based on whether run on release or on push
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euxo pipefail
+          if [ ${{ github.event_name }} = release ]; then
+            tag_name="$RELEASE_TAG"
+            if [[ "$tag_name" =~ ^[0-9]+[.][0-9]+[.][0-9]+$ ]]; then
+              echo "RELEASE_VERSION=$tag_name" >> $GITHUB_ENV
+            else
+              echo "RELEASE_VERSION=${{ github.event.release.id }}" >> $GITHUB_ENV
+            fi
+          elif [ ${{ github.event_name }} = push ]; then
+            echo "RELEASE_VERSION=latest" >> $GITHUB_ENV
+          else
+            echo Unsupported event
+            exit 1
+          fi
+
+      - name: Download docs HTML artifact
+        uses: actions/download-artifact@v8.0.2
+        with:
+          name: docs-html
+          path: ${{ env.RELEASE_VERSION }}
+
+      - name: Copy latest README.html to docs/index.html for GitHub pages
+        if: env.RELEASE_VERSION == 'latest'
+        run: |
+          mkdir -p docs
+          cp ${{ env.RELEASE_VERSION }}/README.html docs/index.html
+
+      - name: Commit changes
+        run: |
+          git config --global user.name "$GITHUB_ACTOR"
+          git config --global user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git add ${{ env.RELEASE_VERSION }}/README.html docs/index.html
+          git commit -m "Update README.html for ${{ env.RELEASE_VERSION }}"
+
+      - name: Push changes
+        uses: linux-system-roles/.github/github-actions/git-push@main
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: docs

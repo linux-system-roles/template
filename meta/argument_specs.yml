@@ -1,86 +1,116 @@
 # SPDX-License-Identifier: MIT
 ---
+# Template meta/argument_specs.yml. When you create a role from this template,
+# replace every placeholder with the role's own values and delete what does not
+# apply. Keep each option's type and default in sync with defaults/main.yml.
+# Descriptions use antsibull semantic markup, not Markdown:
+# C(code), V(value), O(option), L(text,url), B(bold).
 argument_specs:
   main:
     short_description: Basic template for Linux system roles
+    description:
+      - One or more sentences describing what the role does.
+    author:
+      - Your Name (@yourhandle)
+    attributes:
+      check_mode:
+        support: full  # full | partial | none
+        description: Whether the role can run in check mode.
+      idempotent:
+        support: full
+        description: Whether a second run with the same arguments reports no change.
+      # Use "platforms", not "platform": antsibull special-cases "platform" and drops the support badge.
+      # Derive the OS list from galaxy_tags in meta/main.yml.
+      platforms:
+        support: full
+        description: Target operating systems.
+        details:
+          - C(Fedora)
+          - C(RHEL) and compatible Enterprise Linux 9 and 10
     options:
       template_foo:
         type: str
-        required: false
+        default: foo
         description: >-
           A string variable for the foo setting.
 
       template_bar:
         type: bool
-        required: false
+        default: true
         description: >-
           A boolean variable that enables or disables the bar feature.
 
       template_baz:
         type: int
-        required: false
+        default: 0
         description: >-
           An integer variable for a numeric setting.
 
       template_config_path:
         type: path
-        required: false
+        default: /etc/template.conf
         description: >-
-          Filesystem path to the configuration file.
+          Filesystem path to the configuration file, for example C(/etc/template.conf).
 
       template_state:
         type: str
-        required: false
         choices:
           - enabled
           - disabled
+        default: enabled
         description: >-
-          Desired state of the template subsystem.  Use choices to
-          restrict a string variable to a fixed set of allowed values.
+          Desired state of the template subsystem.
+          Use choices to restrict a string variable to a fixed set of allowed values, such as V(enabled) or V(disabled).
 
       template_packages:
         type: list
         elements: str
-        required: false
+        default: []
         description: >-
-          A list of package names.  Use elements to declare the type
-          of each item in the list.
+          A list of package names.
+          Use elements to declare the type of each item in the list.
 
       template_raw_value:
         type: raw
-        required: false
+        default: ""
         description: >-
-          A variable that accepts values of different types.  Use raw
-          when the variable can be either a string or a list, for
-          example.
+          A variable that accepts values of different types.
+          Use raw when the variable can be either a string or a list, for example.
 
       template_services:
         type: list
         elements: dict
-        required: false
+        default: []
         description: >-
-          A list of service configurations.  Each entry is a dictionary
-          with its own set of options.  Use this pattern when the role
-          takes a list of structured items.
+          A list of service configurations.
+          Each entry is a dictionary with its own set of options.
+          Use this pattern when the role takes a list of structured items.
         options:
           name:
             type: str
             required: true
             description: >-
-              Name of the service.  Mark a sub-option as required when
-              it must always be provided.
+              Name of the service.
+              Mark a sub-option as required when it must always be provided.
           type:
             type: str
-            required: false
             choices:
               - simple
               - forking
               - oneshot
             description: >-
-              Type of the service.  Choices work inside nested options
-              the same way as at the top level.
+              Type of the service.
+              Choices work inside nested options the same way as at the top level.
           enabled:
             type: bool
-            required: false
+            default: true
             description: >-
               Whether the service should be enabled at boot.
+    examples: |
+      - name: Describe what this example play does
+        hosts: all
+        vars:
+          template_foo: custom-value
+          template_state: enabled
+        roles:
+          - linux-system-roles.template

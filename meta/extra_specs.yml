@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: MIT
+---
+# notes: and return: are rejected by ansible-lint under argument_specs.yml, so
+# they live here and are merged into the main entry point at build time.
+# Delete this file if the role has neither notes nor returned variables.
+
+notes:
+  - >
+    A technical detail that does not belong in any single option's description.
+
+return:
+  template_returned_variable:
+    description:
+      - What this variable holds and when the role sets it.
+    type: str  # str | int | bool | list | dict
+    returned: always  # or a condition, e.g. "When O(template_state) is V(enabled)."
+    sample: example-value

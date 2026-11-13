@@ -1,0 +1,87 @@
+---
+# yamllint disable rule:line-length
+name: Test converting README.md to README.html
+on:  # yamllint disable-line rule:truthy
+  workflow_call:
+    inputs:
+      requested:
+        description: Run this workflow for an authorized /citest command
+        required: true
+        type: boolean
+permissions:
+  contents: read
+  pull-requests: read
+  # This is required for the ability to create/update the Pull request status
+  statuses: write
+jobs:
+  test_converting_readme:
+    if: inputs.requested || github.event_name != 'issue_comment'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+      contents: read
+      statuses: write
+    steps:
+      - name: Get PR head SHA and context
+        if: github.event_name == 'issue_comment'
+        id: head_sha_context
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+          CONTEXT: "${{ github.workflow }} / ${{ github.job }} (pull_request)"
+        run: |
+          set -euxo pipefail
+          head_sha=$(gh api "repos/$REPO/pulls/$PR_NUMBER" --jq '.head.sha')
+          echo "head_sha=$head_sha" >> "$GITHUB_OUTPUT"
+          echo "context=$CONTEXT" >> "$GITHUB_OUTPUT"
+
+      - name: Set commit status as pending
+        if: github.event_name == 'issue_comment'
+        uses: linux-system-roles/.github/github-actions/commit-status@main
+        with:
+          sha: ${{ steps.head_sha_context.outputs.head_sha }}
+          status: pending
+          context: ${{ steps.head_sha_context.outputs.context }}
+          description: Test started
+          targetUrl: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ job.check_run_id }}
+
+      - name: Update pip, git
+        run: |
+          set -euxo pipefail
+          sudo apt update
+          sudo apt install -y git
+
+      - name: Check out code
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ steps.head_sha_context.outputs.head_sha || github.sha }}
+
+      - name: Remove badges from README.md prior to converting to HTML
+        run: sed -i '1,8 {/^\[\!.*actions\/workflows/d}' README.md
+
+      - name: Convert README.md to HTML
+        uses: linux-system-roles/.github/github-actions/pandoc@main
+        with:
+          image: pandoc/core@sha256:62518bfb6833705dc90a1634d8d879299bd820b3f74ad3b32fba8b618452553a
+          args: >-
+            --from gfm --to html5 --toc --shift-heading-level-by=-1
+            --template .pandoc_template.html5
+            --output README.html README.md
+
+      - name: Upload README.html as an artifact
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: README.html
+          path: README.html
+
+      - name: Set final commit status
+        if: always() && github.event_name == 'issue_comment' && steps.head_sha_context.outputs.head_sha != ''
+        uses: linux-system-roles/.github/github-actions/commit-status@main
+        with:
+          sha: ${{ steps.head_sha_context.outputs.head_sha }}
+          status: ${{ job.status }}
+          context: ${{ steps.head_sha_context.outputs.context }}
+          description: Test finished
+          targetUrl: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ job.check_run_id }}

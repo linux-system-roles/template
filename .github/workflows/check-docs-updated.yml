@@ -65,7 +65,7 @@ jobs:
         run: |
           set -euxo pipefail
           pip install tox
-          pip install "git+https://github.com/linux-system-roles/tox-lsr@b30596c6fd1863b2eed20206ef32d13eac478e18"
+          pip install "git+https://github.com/linux-system-roles/tox-lsr@8a78b9aa198295bb149510610453d33a1afe6366"
 
       - name: Build documentation from argument_specs
         run: tox -e build-docs

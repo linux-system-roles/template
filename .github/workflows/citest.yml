@@ -50,7 +50,7 @@ jobs:
             markdownlint
             pr-title-lint
             qemu-kvm-integration-tests
-            test_converting_readme
+            check-docs-updated
             tft
             woke
           )
@@ -62,7 +62,7 @@ jobs:
             codespell
             markdownlint
             pr-title-lint
-            test_converting_readme
+            check-docs-updated
           )
 
           integration=(
@@ -173,10 +173,10 @@ jobs:
     with:
       requested: true
 
-  test_converting_readme:
+  check_docs_updated:
     needs: parse
-    if: contains(fromJSON(needs.parse.outputs.selected), 'test_converting_readme')
-    uses: ./.github/workflows/test_converting_readme.yml
+    if: contains(fromJSON(needs.parse.outputs.selected), 'check-docs-updated')
+    uses: ./.github/workflows/check-docs-updated.yml
     with:
       requested: true
 

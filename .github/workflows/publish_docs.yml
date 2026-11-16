@@ -1,0 +1,83 @@
+---
+# yamllint disable rule:line-length
+name: Publish README.html to the docs branch
+# For roles whose README.html is generated from meta/argument_specs.yml (the
+# arg_specs_docs group), the committed README.html is already the final rendered
+# page, so there is nothing to convert - this workflow just publishes it as
+# docs/index.html on the docs branch for GitHub Pages. Releases carry their own
+# README.html in the tag, so only main is published here. (Roles not in that
+# group use build_docs.yml, which converts README.md with pandoc instead - that
+# one isolates the untrusted pandoc container in a separate job and passes the
+# result via an artifact; here there is no such step, so a single job that copies
+# the committed file in the runner is enough.)
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - main
+    paths:
+      - README.html
+permissions:
+  contents: read
+# Serialize publication so two quick pushes cannot race
+concurrency:
+  group: publish-docs
+  cancel-in-progress: true
+jobs:
+  publish_docs:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Update pip, git
+        run: |
+          set -euxo pipefail
+          sudo apt update
+          sudo apt install -y git
+
+      - name: Check out the committed README.html
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: true  # needed for docs branch initialization push
+          fetch-depth: 0
+
+      - name: Stash README.html outside the work tree
+        run: cp README.html /tmp/README.html
+      - name: Ensure the docs branch
+        run: |
+          set -euxo pipefail
+          branch=docs
+          existed_in_remote=$(git ls-remote --heads origin $branch)
+
+          if [ -z "${existed_in_remote}" ]; then
+            echo "Creating $branch branch"
+            git config --global user.name "$GITHUB_ACTOR"
+            git config --global user.email "$GITHUB_ACTOR@users.noreply.github.com"
+            git checkout --orphan $branch
+            git reset --hard
+            git commit --allow-empty -m "Initializing $branch branch"
+            git push origin $branch
+            echo "Created $branch branch"
+          else
+            echo "Branch $branch already exists"
+          fi
+
+      - name: Checkout the docs branch
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: docs
+          persist-credentials: true  # needed for commit and push
+      - name: Publish README.html as docs/index.html
+        run: |
+          set -euxo pipefail
+          mkdir -p docs
+          cp /tmp/README.html docs/index.html
+          git config --global user.name "$GITHUB_ACTOR"
+          git config --global user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git add docs/index.html
+          git commit -m "Update docs/index.html from README.html"
+
+      - name: Push changes
+        uses: linux-system-roles/.github/github-actions/git-push@main
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: docs
